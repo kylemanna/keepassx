@@ -21,6 +21,7 @@
 #include <QList>
 
 #include "keys/Key.h"
+#include "keys/ChallengeResponseKey.h"
 
 class CompositeKey : public Key
 {
@@ -36,6 +37,7 @@ public:
     QByteArray rawKey() const;
     QByteArray transform(const QByteArray& seed, quint64 rounds) const;
     void addKey(const Key& key);
+    void addChallengeResponseKey(const ChallengeResponseKey& key);
 
     static int transformKeyBenchmark(int msec);
 
@@ -44,6 +46,7 @@ private:
                                       quint64 rounds);
 
     QList<Key*> m_keys;
+    QList<ChallengeResponseKey*> m_challengeResponseKeys;
 };
 
 #endif // KEEPASSX_COMPOSITEKEY_H

@@ -13,7 +13,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} "/usr/include/ykpers-1")
 
 configure_file(config-keepassx.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-keepassx.h)
 
@@ -109,6 +109,7 @@ set(keepassx_SOURCES
     keys/FileKey.cpp
     keys/Key.h
     keys/PasswordKey.cpp
+    keys/YkChallengeResponseKey.cpp
     streams/HashedBlockStream.cpp
     streams/LayeredStream.cpp
     streams/qtiocompressor.cpp
@@ -214,6 +215,8 @@ target_link_libraries(${PROGNAME}
                       ${QT_QTCORE_LIBRARY}
                       ${QT_QTGUI_LIBRARY}
                       ${GCRYPT_LIBRARIES}
+                      ykpers-1
+                      yubikey
                       ${ZLIB_LIBRARIES})
 
 if(UNIX AND NOT APPLE)

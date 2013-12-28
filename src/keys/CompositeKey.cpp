@@ -17,6 +17,7 @@
 
 #include "CompositeKey.h"
 #include "CompositeKey_p.h"
+#include "ChallengeResponseKey.h"
 
 #include <QtConcurrentRun>
 #include <QTime>
@@ -66,6 +67,9 @@ CompositeKey& CompositeKey::operator=(const CompositeKey& key)
     Q_FOREACH (const Key* subKey, key.m_keys) {
         addKey(*subKey);
     }
+    Q_FOREACH (const ChallengeResponseKey* subKey, key.m_challengeResponseKeys) {
+        addChallengeResponseKey(*subKey);
+    }
 
     return *this;
 }
@@ -86,7 +90,25 @@ QByteArray CompositeKey::transform(const QByteArray& seed, quint64 rounds) const
     Q_ASSERT(seed.size() == 32);
     Q_ASSERT(rounds > 0);
 
-    QByteArray key = rawKey();
+    CryptoHash cryptoHash(CryptoHash::Sha256);
+
+
+    printf("%s():%d m_challengeResponseKeys.size() = %d\n", __func__, __LINE__, m_challengeResponseKeys.size());
+
+    Q_FOREACH (ChallengeResponseKey* key, m_challengeResponseKeys) {
+        printf("%s():%d called\n", __func__, __LINE__);
+
+        key->challenge(seed);
+        cryptoHash.addData(key->rawKey());
+    }
+
+    Q_FOREACH (const Key* key, m_keys) {
+        printf("%s():%d called\n", __func__, __LINE__);
+
+        cryptoHash.addData(key->rawKey());
+    }
+
+    QByteArray key = cryptoHash.result();
 
     QFuture<QByteArray> future = QtConcurrent::run(transformKeyRaw, key.left(16), seed, rounds);
     QByteArray result2 = transformKeyRaw(key.right(16), seed, rounds);
@@ -115,6 +137,13 @@ QByteArray CompositeKey::transformKeyRaw(const QByteArray& key, const QByteArray
 void CompositeKey::addKey(const Key& key)
 {
     m_keys.append(key.clone());
+}
+
+void CompositeKey::addChallengeResponseKey(const ChallengeResponseKey& key)
+{
+    m_challengeResponseKeys.append(key.clone());
+
+    //printf("%s():%d m_challengeResponseKeys.size() = %d\n", __func__, __LINE__, m_challengeResponseKeys.size());
 }
 
 int CompositeKey::transformKeyBenchmark(int msec)

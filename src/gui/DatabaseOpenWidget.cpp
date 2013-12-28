@@ -25,6 +25,7 @@
 #include "format/KeePass2Reader.h"
 #include "keys/FileKey.h"
 #include "keys/PasswordKey.h"
+#include "keys/YkChallengeResponseKey.h"
 
 DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     : DialogyWidget(parent)
@@ -146,6 +147,16 @@ CompositeKey DatabaseOpenWidget::databaseKey()
     }
 
     config()->set("LastKeyFiles", lastKeyFiles);
+
+
+    if (m_ui->checkChallengeResponse->isChecked()) {
+        YkChallengeResponseKey key;
+        QString errorMsg;
+
+        printf("Trying to add challenge response key\n");
+
+        masterKey.addChallengeResponseKey(key);
+    }
 
     return masterKey;
 }
