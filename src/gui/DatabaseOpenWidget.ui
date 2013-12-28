@@ -111,6 +111,13 @@
        </item>
       </layout>
      </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="checkChallengeResponse">
+       <property name="text">
+        <string>Challenge Response:</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
