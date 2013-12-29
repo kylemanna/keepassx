@@ -21,6 +21,7 @@
 #include "core/FilePath.h"
 #include "keys/FileKey.h"
 #include "keys/PasswordKey.h"
+#include "keys/YkChallengeResponseKey.h"
 #include "gui/FileDialog.h"
 #include "gui/MessageBox.h"
 
@@ -123,6 +124,15 @@ void ChangeMasterKeyWidget::generateKey()
             // TODO: error handling
         }
         m_key.addKey(fileKey);
+    }
+
+    if (m_ui->yubikeyGroup->isChecked()) {
+        YkChallengeResponseKey key(2);
+        QString errorMsg;
+
+        printf("Trying to add challenge response key\n");
+
+        m_key.addChallengeResponseKey(key);
     }
 
     Q_EMIT editFinished(true);
