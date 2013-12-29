@@ -47,7 +47,7 @@ void CompositeKey::clear()
 
 bool CompositeKey::isEmpty() const
 {
-    return m_keys.isEmpty();
+    return m_keys.isEmpty() && m_challengeResponseKeys.isEmpty();
 }
 
 CompositeKey* CompositeKey::clone() const
