@@ -126,7 +126,7 @@ void ChangeMasterKeyWidget::generateKey()
         m_key.addKey(fileKey);
     }
 
-    if (m_ui->yubikeyGroup->isChecked()) {
+    if (m_ui->challengeResponseGroup->isChecked()) {
         YkChallengeResponseKey key(2);
         QString errorMsg;
 

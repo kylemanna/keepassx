@@ -124,16 +124,16 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="yubikeyGroup">
+    <widget class="QGroupBox" name="challengeResponseGroup">
      <property name="title">
-      <string>YubiKey</string>
+      <string>Challenge Response</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="1">
-       <widget class="QComboBox" name="slotCombo">
+       <widget class="QComboBox" name="challengeResponseCombo">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -146,9 +146,9 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="challengeResponseSlotLabel">
+       <widget class="QLabel" name="challengeResponseLabel">
         <property name="text">
-         <string>Challenge Response Slot:</string>
+         <string>Challenge Response:</string>
         </property>
        </widget>
       </item>

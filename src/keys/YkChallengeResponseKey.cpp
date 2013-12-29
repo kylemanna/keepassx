@@ -54,6 +54,15 @@ static inline QString printByteArray(const QByteArray& a)
     return s;
 }
 
+bool YkChallengeResponseKey::init()
+{
+    if (!yk_init()) {
+        printf("%s() unable to init yk\n", __func__);
+        return false;
+    }
+    return true;
+}
+
 bool YkChallengeResponseKey::challenge(const QByteArray& challenge)
 {
     YK_KEY *yk = NULL;
@@ -61,8 +70,7 @@ bool YkChallengeResponseKey::challenge(const QByteArray& challenge)
 
     printf("%s(%d) called, s = %s\n", __func__, m_slot, printByteArray(challenge).toLocal8Bit().data());
 
-    if (!yk_init()) {
-        printf("%s() unable to init yk\n", __func__);
+    if (!init()) {
         return false;
     }
 
