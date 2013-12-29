@@ -29,6 +29,9 @@ public:
     YkChallengeResponseKey* clone() const;
     bool challenge(const QByteArray& challenge);
 
+    static bool init();
+
+
 private:
     QByteArray m_key;
     int m_slot;
