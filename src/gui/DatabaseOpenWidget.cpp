@@ -50,6 +50,7 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     connect(m_ui->checkPassword, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
     connect(m_ui->checkKeyFile, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
     connect(m_ui->comboKeyFile, SIGNAL(editTextChanged(QString)), SLOT(setOkButtonEnabled()));
+    connect(m_ui->checkChallengeResponse, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
 
     connect(m_ui->buttonBox, SIGNAL(accepted()), SLOT(openDatabase()));
     connect(m_ui->buttonBox, SIGNAL(rejected()), SLOT(reject()));
@@ -150,7 +151,7 @@ CompositeKey DatabaseOpenWidget::databaseKey()
 
 
     if (m_ui->checkChallengeResponse->isChecked()) {
-        YkChallengeResponseKey key;
+        YkChallengeResponseKey key(2);
         QString errorMsg;
 
         printf("Trying to add challenge response key\n");
@@ -183,7 +184,7 @@ void DatabaseOpenWidget::activateKeyFile()
 
 void DatabaseOpenWidget::setOkButtonEnabled()
 {
-    bool enable = m_ui->checkPassword->isChecked()
+    bool enable = m_ui->checkPassword->isChecked() || m_ui->checkChallengeResponse->isChecked()
             || (m_ui->checkKeyFile->isChecked() && !m_ui->comboKeyFile->currentText().isEmpty());
 
     m_ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(enable);

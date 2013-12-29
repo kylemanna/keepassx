@@ -57,7 +57,6 @@ static inline QString printByteArray(const QByteArray& a)
 bool YkChallengeResponseKey::challenge(const QByteArray& challenge)
 {
     YK_KEY *yk = NULL;
-    m_slot = 2;
     int yk_cmd = (m_slot == 1) ? SLOT_CHAL_HMAC1 : SLOT_CHAL_HMAC2;
 
     printf("%s(%d) called, s = %s\n", __func__, m_slot, printByteArray(challenge).toLocal8Bit().data());
