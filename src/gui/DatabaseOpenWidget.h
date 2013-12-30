@@ -55,6 +55,7 @@ private Q_SLOTS:
     void togglePassword(bool checked);
     void activatePassword();
     void activateKeyFile();
+    void activateChallengeResponse();
     void setOkButtonEnabled();
     void browseKeyFile();
 
