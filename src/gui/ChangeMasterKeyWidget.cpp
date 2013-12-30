@@ -82,6 +82,14 @@ void ChangeMasterKeyWidget::clearForms()
     m_ui->togglePasswordButton->setChecked(false);
     // TODO: clear m_ui->keyFileCombo
 
+    m_ui->challengeResponseGroup->setChecked(false);
+    m_ui->challengeResponseCombo->clear();
+    for (int i = 1; i < 3; i++) {
+        QString s("Yubikey Challenge Respoinse - Slot ");
+        s.append(QString::number(i));
+        m_ui->challengeResponseCombo->addItem(s, QVariant(i));
+    }
+
     m_ui->enterPasswordEdit->setFocus();
 }
 
@@ -127,10 +135,11 @@ void ChangeMasterKeyWidget::generateKey()
     }
 
     if (m_ui->challengeResponseGroup->isChecked()) {
-        YkChallengeResponseKey key(2);
-        QString errorMsg;
+        int i = m_ui->challengeResponseCombo->currentIndex();
+        i = m_ui->challengeResponseCombo->itemData(i).toInt();
+        YkChallengeResponseKey key(i);
 
-        printf("Trying to add challenge response key\n");
+        printf("Trying to add challenge response key %d\n", i);
 
         m_key.addChallengeResponseKey(key);
     }
