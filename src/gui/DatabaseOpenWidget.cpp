@@ -49,11 +49,13 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
 
     connect(m_ui->editPassword, SIGNAL(textChanged(QString)), SLOT(activatePassword()));
     connect(m_ui->comboKeyFile, SIGNAL(editTextChanged(QString)), SLOT(activateKeyFile()));
+    connect(m_ui->comboChallengeResponse, SIGNAL(activated(int)), SLOT(activateChallengeResponse()));
 
     connect(m_ui->checkPassword, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
     connect(m_ui->checkKeyFile, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
     connect(m_ui->comboKeyFile, SIGNAL(editTextChanged(QString)), SLOT(setOkButtonEnabled()));
     connect(m_ui->checkChallengeResponse, SIGNAL(toggled(bool)), SLOT(setOkButtonEnabled()));
+    connect(m_ui->comboChallengeResponse, SIGNAL(activated(int)), SLOT(setOkButtonEnabled()));
 
     connect(m_ui->buttonBox, SIGNAL(accepted()), SLOT(openDatabase()));
     connect(m_ui->buttonBox, SIGNAL(rejected()), SLOT(reject()));
@@ -73,6 +75,12 @@ void DatabaseOpenWidget::load(const QString& filename)
     if (lastKeyFiles.contains(m_filename)) {
         m_ui->checkKeyFile->setChecked(true);
         m_ui->comboKeyFile->addItem(lastKeyFiles[m_filename].toString());
+    }
+
+    for (int i = 1; i < 3; i++) {
+        QString s("Yubikey Challenge Respoinse - Slot ");
+        s.append(QString::number(i));
+        m_ui->comboChallengeResponse->addItem(s, QVariant(i));
     }
 
     m_ui->editPassword->setFocus();
@@ -154,10 +162,11 @@ CompositeKey DatabaseOpenWidget::databaseKey()
 
 
     if (m_ui->checkChallengeResponse->isChecked()) {
-        YkChallengeResponseKey key(2);
-        QString errorMsg;
+        int i = m_ui->comboChallengeResponse->currentIndex();
+        i = m_ui->comboChallengeResponse->itemData(i).toInt();
+        YkChallengeResponseKey key(i);
 
-        printf("Trying to add challenge response key\n");
+        printf("Trying to add challenge response key %d\n", i);
 
         masterKey.addChallengeResponseKey(key);
     }
@@ -178,6 +187,11 @@ void DatabaseOpenWidget::activatePassword()
 void DatabaseOpenWidget::activateKeyFile()
 {
     m_ui->checkKeyFile->setChecked(true);
+}
+
+void DatabaseOpenWidget::activateChallengeResponse()
+{
+    m_ui->checkChallengeResponse->setChecked(true);
 }
 
 void DatabaseOpenWidget::setOkButtonEnabled()
