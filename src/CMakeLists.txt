@@ -110,6 +110,7 @@ set(keepassx_SOURCES
     keys/Key.h
     keys/PasswordKey.cpp
     keys/YkChallengeResponseKey.cpp
+    keys/drivers/Yubikey.cpp
     streams/HashedBlockStream.cpp
     streams/LayeredStream.cpp
     streams/qtiocompressor.cpp
