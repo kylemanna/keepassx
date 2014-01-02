@@ -23,6 +23,7 @@
 #include "keys/YkChallengeResponseKey.h"
 #include "gui/FileDialog.h"
 #include "gui/MessageBox.h"
+#include "crypto/Random.h"
 
 ChangeMasterKeyWidget::ChangeMasterKeyWidget(QWidget* parent)
     : DialogyWidget(parent)
@@ -87,10 +88,29 @@ void ChangeMasterKeyWidget::clearForms()
 
     m_ui->challengeResponseGroup->setChecked(false);
     m_ui->challengeResponseCombo->clear();
-    for (int i = 1; i < 3; i++) {
-        QString s("Yubikey Challenge Respoinse - Slot ");
-        s.append(QString::number(i));
-        m_ui->challengeResponseCombo->addItem(s, QVariant(i));
+
+    /* Code is duplicated in DatabaseOpenWidget.cpp */
+    if (yubikey()->init()) {
+        QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
+
+        for (int i = 1; i < 3; i++) {
+            Yubikey::ChallengeResult result;
+            QByteArray rand = randomGen()->randomArray(8);
+            QByteArray resp;
+
+            result = yubikey()->challenge(i, false, rand, resp);
+
+            if (result != Yubikey::ERROR) {
+                const char *conf;
+                conf = (result == Yubikey::WOULDBLOCK) ? "Press" : "Passive";
+
+                QString s = fmt.arg(QString::number(yubikey()->getSerial()),
+                                    QString::number(i),
+                                    conf);
+
+                m_ui->challengeResponseCombo->addItem(s, QVariant(i));
+            }
+        }
     }
 
     m_ui->enterPasswordEdit->setFocus();
