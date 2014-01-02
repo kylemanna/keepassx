@@ -15,26 +15,25 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KEEPASSX_CHALLENGERESPONSEKEY_H
-#define KEEPASSX_CHALLENGERESPONSEKEY_H
+#ifndef KEEPASSX_YK_CHALLENGERESPONSEKEY_H
+#define KEEPASSX_YK_CHALLENGERESPONSEKEY_H
 
 #include "core/Global.h"
 #include "keys/ChallengeResponseKey.h"
+#include "keys/drivers/Yubikey.h"
 
 class YkChallengeResponseKey : public ChallengeResponseKey
 {
 public:
-    YkChallengeResponseKey(int slot = 0);
+
+    YkChallengeResponseKey(int slot = -1);
     QByteArray rawKey() const;
     YkChallengeResponseKey* clone() const;
     bool challenge(const QByteArray& challenge);
-
-    static bool init();
-
 
 private:
     QByteArray m_key;
     int m_slot;
 };
 
-#endif // KEEPASSX_CHALLENGERESPONSEKEY_H
+#endif // KEEPASSX_YK_CHALLENGERESPONSEKEY_H
