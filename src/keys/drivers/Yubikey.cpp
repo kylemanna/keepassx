@@ -72,7 +72,7 @@ unsigned int Yubikey::addComboBoxItems(QComboBox* combo)
 
         for (int i = 1; i < 3; i++) {
             Yubikey::ChallengeResult result;
-            QByteArray rand = randomGen()->randomArray(64);
+            QByteArray rand = randomGen()->randomArray(1);
             QByteArray resp;
 
             result = challenge(i, false, rand, resp);
@@ -124,20 +124,32 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
                                             QByteArray& resp) const
 {
     int yk_cmd = (slot == 1) ? SLOT_CHAL_HMAC1 : SLOT_CHAL_HMAC2;
+    QByteArray paddedChal = chal;
 
     /* yk_challenge_response() insists on 64 byte response buffer */
     resp.resize(64);
 
+    /* The challenge sent to the yubikey should always be 64 bytes for
+     * compatibility with all configurations.  Follow PKCS7 padding.
+     *
+     * There is some question whether or not 64 byte fixed length
+     * configurations even work, some docs say avoid it.
+     */
+    const int padLen = 64 - paddedChal.size();
+    if (padLen > 0) {
+        paddedChal.append(QByteArray(padLen, padLen));
+    }
+
     const unsigned char *c;
     unsigned char *r;
-    c = reinterpret_cast<const unsigned char*>(chal.constData());
+    c = reinterpret_cast<const unsigned char*>(paddedChal.constData());
     r = reinterpret_cast<unsigned char*>(resp.data());
 
     fprintf(stderr, "%s(%d) c = %s\n", __func__, slot,
-            printByteArray(chal).toLocal8Bit().data());
+            printByteArray(paddedChal).toLocal8Bit().data());
 
     int ret = yk_challenge_response(m_yk, yk_cmd, mayBlock,
-                                    chal.size(), c,
+                                    paddedChal.size(), c,
                                     resp.size(), r);
 
     if(!ret) {
