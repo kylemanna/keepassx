@@ -72,7 +72,7 @@ unsigned int Yubikey::addComboBoxItems(QComboBox* combo)
 
         for (int i = 1; i < 3; i++) {
             Yubikey::ChallengeResult result;
-            QByteArray rand = randomGen()->randomArray(8);
+            QByteArray rand = randomGen()->randomArray(64);
             QByteArray resp;
 
             result = challenge(i, false, rand, resp);
