@@ -92,19 +92,7 @@ QByteArray CompositeKey::transform(const QByteArray& seed, quint64 rounds) const
 
     CryptoHash cryptoHash(CryptoHash::Sha256);
 
-
-    printf("%s():%d m_challengeResponseKeys.size() = %d\n", __func__, __LINE__, m_challengeResponseKeys.size());
-
-    Q_FOREACH (ChallengeResponseKey* key, m_challengeResponseKeys) {
-        printf("%s():%d called\n", __func__, __LINE__);
-
-        key->challenge(seed);
-        cryptoHash.addData(key->rawKey());
-    }
-
     Q_FOREACH (const Key* key, m_keys) {
-        printf("%s():%d called\n", __func__, __LINE__);
-
         cryptoHash.addData(key->rawKey());
     }
 
@@ -132,6 +120,18 @@ QByteArray CompositeKey::transformKeyRaw(const QByteArray& key, const QByteArray
     cipher.processInPlace(result, rounds);
 
     return result;
+}
+
+QByteArray CompositeKey::challenge(const QByteArray& seed) const
+{
+    CryptoHash cryptoHash(CryptoHash::Sha256);
+
+    Q_FOREACH (ChallengeResponseKey* key, m_challengeResponseKeys) {
+        key->challenge(seed);
+        cryptoHash.addData(key->rawKey());
+    }
+
+    return cryptoHash.result();
 }
 
 void CompositeKey::addKey(const Key& key)

@@ -36,6 +36,8 @@ public:
 
     QByteArray rawKey() const;
     QByteArray transform(const QByteArray& seed, quint64 rounds) const;
+    QByteArray challenge(const QByteArray& seed) const;
+
     void addKey(const Key& key);
     void addChallengeResponseKey(const ChallengeResponseKey& key);
 
