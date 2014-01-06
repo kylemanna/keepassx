@@ -19,6 +19,7 @@
 #define KEEPASSX_YUBIKEY_H
 
 #include <QObject>
+#include <QComboBox>
 
 #include <yubikey.h>
 #include <ykcore.h>
@@ -43,6 +44,7 @@ public:
                               QByteArray& resp) const;
 
     unsigned int getSerial() const;
+    unsigned int addComboBoxItems(QComboBox *combo);
 
 private:
     explicit Yubikey();
