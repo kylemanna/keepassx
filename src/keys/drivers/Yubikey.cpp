@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 #include "core/Global.h"
+#include "crypto/Random.h"
 
 #include "Yubikey.h"
 
@@ -57,6 +58,38 @@ bool Yubikey::init()
 
 
     return true;
+}
+
+/* TODO: this should probably be replaced with something using signals/slots
+ * and is thread safe.  addComboBoxItems() probably isn't thread safe if called
+ * from a different thread
+ */
+unsigned int Yubikey::addComboBoxItems(QComboBox* combo)
+{
+    /* Code is duplicated in DatabaseOpenWidget.cpp */
+    if (init()) {
+        QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
+
+        for (int i = 1; i < 3; i++) {
+            Yubikey::ChallengeResult result;
+            QByteArray rand = randomGen()->randomArray(8);
+            QByteArray resp;
+
+            result = challenge(i, false, rand, resp);
+
+            if (result != Yubikey::ERROR) {
+                const char *conf;
+                conf = (result == Yubikey::WOULDBLOCK) ? "Press" : "Passive";
+
+                QString s = fmt.arg(QString::number(getSerial()),
+                                    QString::number(i),
+                                    conf);
+
+                combo->addItem(s, QVariant(i));
+            }
+        }
+    }
+    return 0;
 }
 
 unsigned int Yubikey::getSerial() const
