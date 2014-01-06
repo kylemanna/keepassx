@@ -15,6 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtConcurrentRun>
+
 #include "DatabaseOpenWidget.h"
 #include "ui_DatabaseOpenWidget.h"
 
@@ -76,29 +78,9 @@ void DatabaseOpenWidget::load(const QString& filename)
         m_ui->comboKeyFile->addItem(lastKeyFiles[m_filename].toString());
     }
 
-    /* Code is duplicated in ChangeMasterKeyWidget.cpp */
-    if (yubikey()->init()) {
-        QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
-
-        for (int i = 1; i < 3; i++) {
-            Yubikey::ChallengeResult result;
-            QByteArray rand = randomGen()->randomArray(8);
-            QByteArray resp;
-
-            result = yubikey()->challenge(i, false, rand, resp);
-
-            if (result != Yubikey::ERROR) {
-                const char *conf;
-                conf = (result == Yubikey::WOULDBLOCK) ? "Press" : "Passive";
-
-                QString s = fmt.arg(QString::number(yubikey()->getSerial()),
-                                    QString::number(i),
-                                    conf);
-
-                m_ui->comboChallengeResponse->addItem(s, QVariant(i));
-            }
-        }
-    }
+    /* Yubikey init is slow */
+    QtConcurrent::run(yubikey(), &Yubikey::addComboBoxItems,
+                      m_ui->comboChallengeResponse);
 
     m_ui->editPassword->setFocus();
 }

@@ -15,6 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtConcurrentRun>
+
 #include "ChangeMasterKeyWidget.h"
 #include "ui_ChangeMasterKeyWidget.h"
 
@@ -89,29 +91,9 @@ void ChangeMasterKeyWidget::clearForms()
     m_ui->challengeResponseGroup->setChecked(false);
     m_ui->challengeResponseCombo->clear();
 
-    /* Code is duplicated in DatabaseOpenWidget.cpp */
-    if (yubikey()->init()) {
-        QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
-
-        for (int i = 1; i < 3; i++) {
-            Yubikey::ChallengeResult result;
-            QByteArray rand = randomGen()->randomArray(8);
-            QByteArray resp;
-
-            result = yubikey()->challenge(i, false, rand, resp);
-
-            if (result != Yubikey::ERROR) {
-                const char *conf;
-                conf = (result == Yubikey::WOULDBLOCK) ? "Press" : "Passive";
-
-                QString s = fmt.arg(QString::number(yubikey()->getSerial()),
-                                    QString::number(i),
-                                    conf);
-
-                m_ui->challengeResponseCombo->addItem(s, QVariant(i));
-            }
-        }
-    }
+    /* Yubikey init is slow */
+    QtConcurrent::run(yubikey(), &Yubikey::addComboBoxItems,
+                      m_ui->challengeResponseCombo);
 
     m_ui->enterPasswordEdit->setFocus();
 }
