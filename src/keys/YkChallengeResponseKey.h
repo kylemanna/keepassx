@@ -26,14 +26,18 @@ class YkChallengeResponseKey : public ChallengeResponseKey
 {
 public:
 
-    YkChallengeResponseKey(int slot = -1);
+    YkChallengeResponseKey(int slot = -1,
+                           bool blocking = false);
+
     QByteArray rawKey() const;
     YkChallengeResponseKey* clone() const;
     bool challenge(const QByteArray& challenge);
+    QString getName() const;
 
 private:
     QByteArray m_key;
     int m_slot;
+    bool m_blocking;
 };
 
 #endif // KEEPASSX_YK_CHALLENGERESPONSEKEY_H

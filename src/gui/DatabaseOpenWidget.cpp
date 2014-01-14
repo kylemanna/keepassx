@@ -79,8 +79,8 @@ void DatabaseOpenWidget::load(const QString& filename)
     }
 
     /* Yubikey init is slow */
-    QtConcurrent::run(yubikey(), &Yubikey::addComboBoxItems,
-                      m_ui->comboChallengeResponse);
+    connect(yubikey(), SIGNAL(detected(int,bool)), SLOT(ykDetected(int,bool)), Qt::QueuedConnection);
+    QtConcurrent::run(yubikey(), &Yubikey::detect);
 
     m_ui->editPassword->setFocus();
 }
@@ -214,4 +214,10 @@ void DatabaseOpenWidget::browseKeyFile()
     if (!filename.isEmpty()) {
         m_ui->comboKeyFile->lineEdit()->setText(filename);
     }
+}
+
+void DatabaseOpenWidget::ykDetected(int slot, bool blocking)
+{
+    YkChallengeResponseKey yk(slot, blocking);
+    m_ui->comboChallengeResponse->addItem(yk.getName(), QVariant(slot));
 }

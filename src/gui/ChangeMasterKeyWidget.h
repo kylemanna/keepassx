@@ -48,6 +48,7 @@ private Q_SLOTS:
     void togglePassword(bool checked);
     void createKeyFile();
     void browseKeyFile();
+    void ykDetected(int slot, bool blocking);
 
 private:
     const QScopedPointer<Ui::ChangeMasterKeyWidget> m_ui;

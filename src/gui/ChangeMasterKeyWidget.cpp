@@ -92,8 +92,8 @@ void ChangeMasterKeyWidget::clearForms()
     m_ui->challengeResponseCombo->clear();
 
     /* Yubikey init is slow */
-    QtConcurrent::run(yubikey(), &Yubikey::addComboBoxItems,
-                      m_ui->challengeResponseCombo);
+    connect(yubikey(), SIGNAL(detected(int,bool)), SLOT(ykDetected(int,bool)), Qt::QueuedConnection);
+    QtConcurrent::run(yubikey(), &Yubikey::detect);
 
     m_ui->enterPasswordEdit->setFocus();
 }
@@ -156,4 +156,11 @@ void ChangeMasterKeyWidget::generateKey()
 void ChangeMasterKeyWidget::reject()
 {
     Q_EMIT editFinished(false);
+}
+
+
+void ChangeMasterKeyWidget::ykDetected(int slot, bool blocking)
+{
+    YkChallengeResponseKey yk(slot, blocking);
+    m_ui->challengeResponseCombo->addItem(yk.getName(), QVariant(slot));
 }

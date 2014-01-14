@@ -58,6 +58,7 @@ private Q_SLOTS:
     void activateChallengeResponse();
     void setOkButtonEnabled();
     void browseKeyFile();
+    void ykDetected(int slot, bool blocking);
 
 protected:
     const QScopedPointer<Ui::DatabaseOpenWidget> m_ui;

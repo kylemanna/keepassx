@@ -170,6 +170,7 @@ set(keepassx_MOC
     gui/group/GroupModel.h
     gui/group/GroupView.h
     keys/CompositeKey_p.h
+    keys/drivers/Yubikey.h
     streams/HashedBlockStream.h
     streams/LayeredStream.h
     streams/qtiocompressor.h

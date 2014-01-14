@@ -26,8 +26,10 @@
 #include "keys/YkChallengeResponseKey.h"
 #include "keys/drivers/Yubikey.h"
 
-YkChallengeResponseKey::YkChallengeResponseKey(int slot)
-    : m_slot(slot)
+YkChallengeResponseKey::YkChallengeResponseKey(int slot,
+                                               bool blocking)
+    : m_slot(slot),
+      m_blocking(blocking)
 {
 }
 
@@ -50,4 +52,13 @@ bool YkChallengeResponseKey::challenge(const QByteArray& chal)
     }
 
     return false;
+}
+
+QString YkChallengeResponseKey::getName() const
+{
+    QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
+
+    return fmt.arg(QString::number(yubikey()->getSerial()),
+                   QString::number(m_slot),
+                   (m_blocking) ? "Press" : "Passive");
 }

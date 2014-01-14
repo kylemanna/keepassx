@@ -30,8 +30,10 @@
 /**
  * Singleton class to manage the interface to the hardware
  */
-class Yubikey
+class Yubikey : public QObject
 {
+    Q_OBJECT
+
 public:
     enum ChallengeResult { ERROR = -1, SUCCESS = 0, WOULDBLOCK };
 
@@ -44,7 +46,10 @@ public:
                               QByteArray& resp) const;
 
     unsigned int getSerial() const;
-    unsigned int addComboBoxItems(QComboBox *combo);
+    void detect();
+
+Q_SIGNALS:
+    void detected(int slot, bool blocking);
 
 private:
     explicit Yubikey();
