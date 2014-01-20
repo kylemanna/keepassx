@@ -108,6 +108,7 @@ set(keepassx_SOURCES
     keys/CompositeKey_p.h
     keys/FileKey.cpp
     keys/Key.h
+    keys/ChallengeResponseKey.h
     keys/PasswordKey.cpp
     keys/YkChallengeResponseKey.cpp
     keys/drivers/Yubikey.cpp
