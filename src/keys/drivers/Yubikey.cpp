@@ -132,8 +132,10 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     c = reinterpret_cast<const unsigned char*>(paddedChal.constData());
     r = reinterpret_cast<unsigned char*>(resp.data());
 
+#ifdef DEBUG
     fprintf(stderr, "%s(%d) c = %s\n", __func__, slot,
             printByteArray(paddedChal).toLocal8Bit().data());
+#endif
 
     int ret = yk_challenge_response(m_yk, yk_cmd, mayBlock,
                                     paddedChal.size(), c,
@@ -151,8 +153,10 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     /* Actual HMAC-SHA1 response is only 20 bytes */
     resp.resize(20);
 
+#ifdef DEBUG
     fprintf(stderr, "%s(%d) r = %s, ret = %d\n", __func__, slot,
             printByteArray(resp).toLocal8Bit().data(), ret);
+#endif
 
     return SUCCESS;
 }

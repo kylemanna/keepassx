@@ -168,8 +168,6 @@ CompositeKey DatabaseOpenWidget::databaseKey()
         i = m_ui->comboChallengeResponse->itemData(i).toInt();
         YkChallengeResponseKey key(i);
 
-        printf("Trying to add challenge response key %d\n", i);
-
         masterKey.addChallengeResponseKey(key);
     }
 

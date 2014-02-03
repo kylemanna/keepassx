@@ -141,8 +141,6 @@ void ChangeMasterKeyWidget::generateKey()
         i = m_ui->challengeResponseCombo->itemData(i).toInt();
         YkChallengeResponseKey key(i);
 
-        printf("Trying to add challenge response key %d\n", i);
-
         m_key.addChallengeResponseKey(key);
     }
 

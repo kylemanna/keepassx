@@ -21,11 +21,16 @@
 #include <QObject>
 #include <QComboBox>
 
+#ifdef WITH_YUBIKEY
 #include <yubikey.h>
 #include <ykcore.h>
 #include <ykdef.h>
 #include <ykstatus.h>
 #include <ykpers-version.h>
+#else
+/* Stub Yubikey functions */
+typedef void YK_KEY;
+#endif
 
 /**
  * Singleton class to manage the interface to the hardware

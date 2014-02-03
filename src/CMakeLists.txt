@@ -112,7 +112,6 @@ set(keepassx_SOURCES
     keys/Key.h
     keys/PasswordKey.cpp
     keys/YkChallengeResponseKey.cpp
-    keys/drivers/Yubikey.cpp
     streams/HashedBlockStream.cpp
     streams/LayeredStream.cpp
     streams/qtiocompressor.cpp
@@ -129,6 +128,13 @@ if(NOT GCRYPT_HAS_SALSA20)
       crypto/salsa20/ecrypt-sync.h
       crypto/salsa20/salsa20.c
       crypto/SymmetricCipherSalsa20.cpp
+  )
+endif()
+
+if(WITH_YUBIKEY)
+  set(keepassx_SOURCES
+      ${keepassx_SOURCES}
+      keys/drivers/Yubikey.cpp
   )
 endif()
 
