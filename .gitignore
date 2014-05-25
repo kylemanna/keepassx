@@ -1,7 +1,2 @@
 CMakeLists.txt.*
 build/
-*.cxx
-*.cxx_parameters
-*.cmake
-*.so
-ui_*.h
