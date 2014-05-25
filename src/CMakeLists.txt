@@ -132,10 +132,9 @@ if(NOT GCRYPT_HAS_SALSA20)
 endif()
 
 if(YUBIKEY_FOUND)
-  set(keepassx_SOURCES
-      ${keepassx_SOURCES}
-      keys/drivers/Yubikey.cpp
-  )
+  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/Yubikey.cpp)
+else()
+  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/YubikeyStub.cpp)
 endif()
 
 set(keepassx_SOURCES_MAINEXE
@@ -241,11 +240,14 @@ target_link_libraries(${PROGNAME}
                       ${QT_QTCORE_LIBRARY}
                       ${QT_QTGUI_LIBRARY}
                       ${GCRYPT_LIBRARIES}
-                      ${ZLIB_LIBRARIES}
-                      ${YUBIKEY_LIBRARIES})
+                      ${ZLIB_LIBRARIES})
 
 if(UNIX AND NOT APPLE)
   target_link_libraries(${PROGNAME} ${QT_QTDBUS_LIBRARY})
+endif()
+
+if(YUBIKEY_FOUND)
+  target_link_libraries(${PROGNAME} ${YUBIKEY_LIBRARIES})
 endif()
 
 set_target_properties(${PROGNAME} PROPERTIES ENABLE_EXPORTS ON)
