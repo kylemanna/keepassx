@@ -21,7 +21,7 @@
 #include <QObject>
 #include <QComboBox>
 
-#ifdef WITH_YUBIKEY
+#ifdef YUBIKEY_FOUND
 #include <yubikey.h>
 #include <ykcore.h>
 #include <ykdef.h>

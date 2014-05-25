@@ -122,11 +122,6 @@ else()
   add_gcc_compiler_flags("-ansi")
 endif()
 
-if (WITH_YUBIKEY)
-  add_gcc_compiler_cxxflags("-DWITH_YUBIKEY")
-endif()
-
-
 if(MINGW)
   set(CMAKE_RC_COMPILER_INIT windres)
   enable_language(RC)
@@ -194,6 +189,11 @@ endif()
 
 # Optional
 find_package(Yubikey)
+
+if(YUBIKEY_FOUND)
+  add_gcc_compiler_cxxflags("-DYUBIKEY_FOUND")
+endif()
+
 
 if(UNIX)
   check_cxx_source_compiles("#include <sys/prctl.h>
