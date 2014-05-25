@@ -14,8 +14,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # FIXME: update copyright
 
-find_path(YUBIKEY_CORE_INCLUDE_DIR NAMES ykcore.h)
-find_path(YUBIKEY_PERS_INCLUDE_DIR NAMES yubikey.h)
+find_path(YUBIKEY_CORE_INCLUDE_DIR yubikey.h)
+find_path(YUBIKEY_PERS_INCLUDE_DIR ykcore.h PATH_SUFFIXES ykpers-1)
 set(YUBIKEY_INCLUDE_DIRS ${YUBIKEY_CORE_INCLUDE_DIR} ${YUBIKEY_PERS_INCLUDE_DIR})
 
 find_library(YUBIKEY_CORE_LIBRARY yubikey)
@@ -27,4 +27,4 @@ find_package_handle_standard_args(Yubikey DEFAULT_MSG YUBIKEY_LIBRARIES YUBIKEY_
 
 # TODO: Is mark_as_advanced() necessary? It's used in many examples with
 #       little explanation.  Disable for now in favor of simplicity.
-#mark_as_advanced(YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
+mark_as_advanced(YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
