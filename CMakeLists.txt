@@ -33,8 +33,6 @@ option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_GUI_TESTS "Enable building of GUI tests" OFF)
 option(WITH_LTO "Enable Link Time Optimization (LTO)" OFF)
 option(WITH_CXX11 "Build with the C++ 11 standard" OFF)
-option(WITH_YUBIKEY "Build with Yubico YubiKey support" OFF)
-
 
 set(KEEPASSX_VERSION "2.0 alpha 6")
 set(KEEPASSX_VERSION_NUM "1.9.85")
@@ -193,6 +191,9 @@ check_cxx_source_compiles("
 if(NOT ZLIB_SUPPORTS_GZIP)
   message(FATAL_ERROR "zlib 1.2.x or higher is required to use the gzip format")
 endif()
+
+# Optional
+find_package(Yubikey)
 
 if(UNIX)
   check_cxx_source_compiles("#include <sys/prctl.h>

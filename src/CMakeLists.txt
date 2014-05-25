@@ -131,7 +131,7 @@ if(NOT GCRYPT_HAS_SALSA20)
   )
 endif()
 
-if(WITH_YUBIKEY)
+if(YUBIKEY_FOUND)
   set(keepassx_SOURCES
       ${keepassx_SOURCES}
       keys/drivers/Yubikey.cpp
@@ -241,9 +241,8 @@ target_link_libraries(${PROGNAME}
                       ${QT_QTCORE_LIBRARY}
                       ${QT_QTGUI_LIBRARY}
                       ${GCRYPT_LIBRARIES}
-                      ykpers-1
-                      yubikey
-                      ${ZLIB_LIBRARIES})
+                      ${ZLIB_LIBRARIES}
+                      ${YUBIKEY_LIBRARIES})
 
 if(UNIX AND NOT APPLE)
   target_link_libraries(${PROGNAME} ${QT_QTDBUS_LIBRARY})
