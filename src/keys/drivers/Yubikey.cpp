@@ -68,7 +68,6 @@ bool Yubikey::init()
 
 void Yubikey::detect()
 {
-    /* Code is duplicated in DatabaseOpenWidget.cpp */
     if (init()) {
 
         for (int i = 1; i < 3; i++) {
