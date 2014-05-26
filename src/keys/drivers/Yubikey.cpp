@@ -28,7 +28,12 @@
 
 #include "Yubikey.h"
 
-Yubikey::Yubikey()
+/* Cast the void pointer from the generalized class definition
+ * to the proper pointer type from the now included system libraries
+ */
+#define m_yk (static_cast<YK_KEY*>(m_yk_void))
+
+Yubikey::Yubikey() : m_yk_void(NULL)
 {
 }
 
@@ -43,13 +48,13 @@ Yubikey* Yubikey::instance()
     return m_instance;
 }
 
-/* Cast the void pointer from the generalized class definition
- * to the proper pointer type from the now included system libraries
- */
-#define m_yk (static_cast<YK_KEY*>(m_yk_void))
-
 bool Yubikey::init()
 {
+	/* Already initalized */
+	if (m_yk != NULL) {
+		return true;
+	}
+
     if (!yk_init()) {
         fprintf(stderr, "%s() unable to init yk\n", __func__);
         return false;
@@ -57,11 +62,10 @@ bool Yubikey::init()
 
     /* TODO: handle multiple attached hardware devices, currently own one */
     m_yk_void = static_cast<void *>(yk_open_first_key());
-    if (!m_yk) {
+    if (m_yk == NULL) {
         fprintf(stderr, "%s() unable to open first yk\n", __func__);
         return false;
     }
-
 
     return true;
 }
