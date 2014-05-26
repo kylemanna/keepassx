@@ -56,9 +56,12 @@ bool YkChallengeResponseKey::challenge(const QByteArray& chal)
 
 QString YkChallengeResponseKey::getName() const
 {
+    unsigned int serial;
     QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
 
-    return fmt.arg(QString::number(yubikey()->getSerial()),
+    yubikey()->getSerial(serial);
+
+    return fmt.arg(QString::number(serial),
                    QString::number(m_slot),
                    (m_blocking) ? "Press" : "Passive");
 }

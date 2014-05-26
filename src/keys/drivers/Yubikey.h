@@ -19,18 +19,6 @@
 #define KEEPASSX_YUBIKEY_H
 
 #include <QObject>
-#include <QComboBox>
-
-#ifdef YUBIKEY_FOUND
-#include <yubikey.h>
-#include <ykcore.h>
-#include <ykdef.h>
-#include <ykstatus.h>
-#include <ykpers-version.h>
-#else
-/* Stub Yubikey functions */
-typedef void YK_KEY;
-#endif
 
 /**
  * Singleton class to manage the interface to the hardware
@@ -44,24 +32,35 @@ public:
 
     static Yubikey* instance();
 
+    /** Initialize the underlying yubico libraries */
     bool init();
 
+    /** Issue a challenge to the hardware */
     ChallengeResult challenge(int slot, bool mayBlock,
                               const QByteArray& chal,
                               QByteArray& resp) const;
 
-    unsigned int getSerial() const;
+    /** Read the serial number from the hardware */
+    bool getSerial(unsigned int& serial) const;
+
+    /** Start looking for attached hardware devices */
     void detect();
 
 Q_SIGNALS:
+    /** Emitted in response to detect() when a device is found
+	 *
+     * @slot is the slot number detected
+     * @blocking signifies if the YK is setup in passive mode or if requires
+     *           the user to touch it for a response
+     */
     void detected(int slot, bool blocking);
 
 private:
     explicit Yubikey();
-
     static Yubikey* m_instance;
-    YK_KEY *m_yk;
-    unsigned int m_serial;
+
+    /* Create void ptr here to avoid ifdef header include mess */
+    void *m_yk_void;
 
     Q_DISABLE_COPY(Yubikey)
 };

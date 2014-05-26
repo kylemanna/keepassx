@@ -40,7 +40,6 @@ Yubikey* Yubikey::instance()
 bool Yubikey::init()
 {
     m_yk = NULL;
-    m_serial = 0;
     return false;
 }
 
@@ -48,9 +47,9 @@ void Yubikey::detect()
 {
 }
 
-unsigned int Yubikey::getSerial() const
+bool Yubikey::getSerial(unsigned int& serial) const
 {
-    return m_serial;
+    return false;
 }
 
 Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,

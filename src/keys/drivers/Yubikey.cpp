@@ -20,6 +20,12 @@
 #include "core/Global.h"
 #include "crypto/Random.h"
 
+#include <ykcore.h>
+#include <yubikey.h>
+#include <ykdef.h>
+#include <ykstatus.h>
+#include <ykpers-version.h>
+
 #include "Yubikey.h"
 
 Yubikey::Yubikey()
@@ -37,6 +43,11 @@ Yubikey* Yubikey::instance()
     return m_instance;
 }
 
+/* Cast the void pointer from the generalized class definition
+ * to the proper pointer type from the now included system libraries
+ */
+#define m_yk (static_cast<YK_KEY*>(m_yk_void))
+
 bool Yubikey::init()
 {
     if (!yk_init()) {
@@ -44,15 +55,10 @@ bool Yubikey::init()
         return false;
     }
 
-    /* Todo: scale to multiple keys */
-    m_yk = yk_open_first_key();
+    /* TODO: handle multiple attached hardware devices, currently own one */
+    m_yk_void = static_cast<void *>(yk_open_first_key());
     if (!m_yk) {
         fprintf(stderr, "%s() unable to open first yk\n", __func__);
-        return false;
-    }
-
-    if (!yk_get_serial(m_yk, 1, 0, &m_serial)) {
-        fprintf(stderr, "%s() failed to read serial\n", __func__);
         return false;
     }
 
@@ -79,9 +85,14 @@ void Yubikey::detect()
     }
 }
 
-unsigned int Yubikey::getSerial() const
+bool Yubikey::getSerial(unsigned int& serial) const
 {
-    return m_serial;
+    if (!yk_get_serial(m_yk, 1, 0, &serial)) {
+        fprintf(stderr, "%s() failed to read serial\n", __func__);
+        return false;
+    }
+
+    return true;
 }
 
 static void report_yk_error(void)
