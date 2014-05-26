@@ -216,4 +216,6 @@ void DatabaseOpenWidget::ykDetected(int slot, bool blocking)
 {
     YkChallengeResponseKey yk(slot, blocking);
     m_ui->comboChallengeResponse->addItem(yk.getName(), QVariant(slot));
+    m_ui->comboChallengeResponse->setEnabled(true);
+    m_ui->checkChallengeResponse->setEnabled(true);
 }

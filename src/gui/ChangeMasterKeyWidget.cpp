@@ -158,4 +158,5 @@ void ChangeMasterKeyWidget::ykDetected(int slot, bool blocking)
 {
     YkChallengeResponseKey yk(slot, blocking);
     m_ui->challengeResponseCombo->addItem(yk.getName(), QVariant(slot));
+    m_ui->challengeResponseGroup->setEnabled(true);
 }

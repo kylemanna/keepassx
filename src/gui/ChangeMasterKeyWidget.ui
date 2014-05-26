@@ -125,6 +125,9 @@
    </item>
    <item>
     <widget class="QGroupBox" name="challengeResponseGroup">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="title">
       <string>Challenge Response</string>
      </property>
@@ -133,14 +136,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="1">
-       <widget class="QComboBox" name="challengeResponseCombo">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="QComboBox" name="challengeResponseCombo"/>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="challengeResponseLabel">
