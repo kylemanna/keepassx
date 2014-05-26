@@ -65,3 +65,8 @@ QString YkChallengeResponseKey::getName() const
                    QString::number(m_slot),
                    (m_blocking) ? "Press" : "Passive");
 }
+
+bool YkChallengeResponseKey::isBlocking() const
+{
+    return m_blocking;
+}

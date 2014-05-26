@@ -33,6 +33,7 @@ public:
     YkChallengeResponseKey* clone() const;
     bool challenge(const QByteArray& challenge);
     QString getName() const;
+    bool isBlocking() const;
 
 private:
     QByteArray m_key;
