@@ -34,6 +34,7 @@ public:
 
     /** Initialize the underlying yubico libraries */
     bool init();
+    bool deinit();
 
     /** Issue a challenge to the hardware */
     ChallengeResult challenge(int slot, bool mayBlock,
@@ -61,6 +62,7 @@ private:
 
     /* Create void ptr here to avoid ifdef header include mess */
     void *m_yk_void;
+    void *m_ykds_void;
 
     Q_DISABLE_COPY(Yubikey)
 };

@@ -29,11 +29,12 @@
 #include "Yubikey.h"
 
 /* Cast the void pointer from the generalized class definition
- * to the proper pointer type from the now included system libraries
+ * to the proper pointer type from the now included system headers
  */
 #define m_yk (static_cast<YK_KEY*>(m_yk_void))
+#define m_ykds (static_cast<YK_STATUS*>(m_ykds_void))
 
-Yubikey::Yubikey() : m_yk_void(NULL)
+Yubikey::Yubikey() : m_yk_void(NULL), m_ykds_void(NULL)
 {
 }
 
@@ -50,9 +51,16 @@ Yubikey* Yubikey::instance()
 
 bool Yubikey::init()
 {
-    /* Already initalized */
-    if (m_yk != NULL) {
-        return true;
+    /* Previously initalized */
+    if (m_yk != NULL && m_ykds != NULL) {
+
+        if (yk_get_status(m_yk, m_ykds)) {
+            /* Still connected */
+            return true;
+        } else {
+            /* Initialized but not connected anymore, re-init */
+            deinit();
+        }
     }
 
     if (!yk_init()) {
@@ -60,9 +68,31 @@ bool Yubikey::init()
     }
 
     /* TODO: handle multiple attached hardware devices, currently own one */
-    m_yk_void = static_cast<void *>(yk_open_first_key());
+    m_yk_void = static_cast<void*>(yk_open_first_key());
     if (m_yk == NULL) {
         return false;
+    }
+
+    m_ykds_void = static_cast<void*>(ykds_alloc());
+    if (m_ykds == NULL) {
+        yk_close_key(m_yk);
+        m_yk_void = NULL;
+        return false;
+    }
+
+    return true;
+}
+
+bool Yubikey::deinit()
+{
+    if (m_yk) {
+        yk_close_key(m_yk);
+        m_yk_void = NULL;
+    }
+
+    if (m_ykds) {
+      ykds_free(m_ykds);
+      m_ykds_void = NULL;
     }
 
     return true;
@@ -89,7 +119,6 @@ void Yubikey::detect()
 bool Yubikey::getSerial(unsigned int& serial) const
 {
     if (!yk_get_serial(m_yk, 1, 0, &serial)) {
-        fprintf(stderr, "%s() failed to read serial\n", __func__);
         return false;
     }
 
@@ -146,11 +175,21 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
         } else if (yk_errno == YK_ETIMEOUT) {
             return ERROR;
         } else if (yk_errno) {
+
+            /* Something went wrong, close the key, so that the next call to
+             * can try to re-open.
+             *
+             * Likely caused by the Yubikey being unplugged.
+             */
+
+#ifdef QT_DEBUG
             if (yk_errno == YK_EUSBERR) {
                 fprintf(stderr, "USB error: %s\n", yk_usb_strerror());
             } else {
                 fprintf(stderr, "Yubikey core error: %s\n", yk_strerror(yk_errno));
             }
+#endif
+
             return ERROR;
         }
     }
