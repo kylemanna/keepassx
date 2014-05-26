@@ -48,7 +48,7 @@ public:
 
 Q_SIGNALS:
     /** Emitted in response to detect() when a device is found
-	 *
+     *
      * @slot is the slot number detected
      * @blocking signifies if the YK is setup in passive mode or if requires
      *           the user to touch it for a response
@@ -64,9 +64,5 @@ private:
 
     Q_DISABLE_COPY(Yubikey)
 };
-
-inline Yubikey* yubikey() {
-    return Yubikey::instance();
-}
 
 #endif // KEEPASSX_YUBIKEY_H

@@ -47,7 +47,7 @@ YkChallengeResponseKey* YkChallengeResponseKey::clone() const
 /** Assumes yubikey()->init() was called */
 bool YkChallengeResponseKey::challenge(const QByteArray& chal)
 {
-    if (yubikey()->challenge(m_slot, true, chal, m_key) != Yubikey::ERROR) {
+    if (Yubikey::instance()->challenge(m_slot, true, chal, m_key) != Yubikey::ERROR) {
         return true;
     }
 
@@ -59,7 +59,7 @@ QString YkChallengeResponseKey::getName() const
     unsigned int serial;
     QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
 
-    yubikey()->getSerial(serial);
+    Yubikey::instance()->getSerial(serial);
 
     return fmt.arg(QString::number(serial),
                    QString::number(m_slot),

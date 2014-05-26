@@ -82,8 +82,10 @@ void DatabaseOpenWidget::load(const QString& filename)
     }
 
     /* Yubikey init is slow */
-    connect(yubikey(), SIGNAL(detected(int,bool)), SLOT(ykDetected(int,bool)), Qt::QueuedConnection);
-    QtConcurrent::run(yubikey(), &Yubikey::detect);
+    connect(Yubikey::instance(), SIGNAL(detected(int,bool)),
+                                 SLOT(ykDetected(int,bool)),
+                                 Qt::QueuedConnection);
+    QtConcurrent::run(Yubikey::instance(), &Yubikey::detect);
 
     m_ui->editPassword->setFocus();
 }
