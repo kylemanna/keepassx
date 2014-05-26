@@ -20,7 +20,7 @@
 
 #include "core/Global.h"
 #include "keys/ChallengeResponseKey.h"
-#include "keys/drivers/Yubikey.h"
+#include "keys/drivers/YubiKey.h"
 
 class YkChallengeResponseKey : public ChallengeResponseKey
 {

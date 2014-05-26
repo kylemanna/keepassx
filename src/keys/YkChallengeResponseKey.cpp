@@ -24,7 +24,7 @@
 #include "crypto/Random.h"
 
 #include "keys/YkChallengeResponseKey.h"
-#include "keys/drivers/Yubikey.h"
+#include "keys/drivers/YubiKey.h"
 
 YkChallengeResponseKey::YkChallengeResponseKey(int slot,
                                                bool blocking)
@@ -47,7 +47,7 @@ YkChallengeResponseKey* YkChallengeResponseKey::clone() const
 /** Assumes yubikey()->init() was called */
 bool YkChallengeResponseKey::challenge(const QByteArray& chal)
 {
-    if (Yubikey::instance()->challenge(m_slot, true, chal, m_key) != Yubikey::ERROR) {
+    if (YubiKey::instance()->challenge(m_slot, true, chal, m_key) != YubiKey::ERROR) {
         return true;
     }
 
@@ -57,9 +57,9 @@ bool YkChallengeResponseKey::challenge(const QByteArray& chal)
 QString YkChallengeResponseKey::getName() const
 {
     unsigned int serial;
-    QString fmt("Yubikey[%1] Challenge Response - Slot %2 - %3");
+    QString fmt("YubiKey[%1] Challenge Response - Slot %2 - %3");
 
-    Yubikey::instance()->getSerial(serial);
+    YubiKey::instance()->getSerial(serial);
 
     return fmt.arg(QString::number(serial),
                    QString::number(m_slot),

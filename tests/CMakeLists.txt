@@ -174,7 +174,7 @@ add_unit_test(NAME testentrysearcher SOURCES TestEntrySearcher.cpp MOCS TestEntr
 add_unit_test(NAME testexporter SOURCES TestExporter.cpp MOCS TestExporter.h
               LIBS ${TEST_LIBRARIES})
 
-add_unit_test(NAME testyubikeychalresp SOURCES TestYubikeyChalResp.cpp MOCS TestYubikeyChalResp.h
+add_unit_test(NAME testyubikeychalresp SOURCES TestYubiKeyChalResp.cpp MOCS TestYubiKeyChalResp.h
               LIBS ${TEST_LIBRARIES})
 
 if(WITH_GUI_TESTS)

@@ -88,11 +88,11 @@ void ChangeMasterKeyWidget::clearForms()
     m_ui->challengeResponseGroup->setChecked(false);
     m_ui->challengeResponseCombo->clear();
 
-    /* Yubikey init is slow */
-    connect(Yubikey::instance(), SIGNAL(detected(int,bool)),
+    /* YubiKey init is slow */
+    connect(YubiKey::instance(), SIGNAL(detected(int,bool)),
                                  SLOT(ykDetected(int,bool)),
                                  Qt::QueuedConnection);
-    QtConcurrent::run(Yubikey::instance(), &Yubikey::detect);
+    QtConcurrent::run(YubiKey::instance(), &YubiKey::detect);
 
     m_ui->enterPasswordEdit->setFocus();
 }

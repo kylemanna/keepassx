@@ -23,7 +23,7 @@ find_library(YUBIKEY_PERS_LIBRARY ykpers-1)
 set(YUBIKEY_LIBRARIES ${YUBIKEY_CORE_LIBRARY} ${YUBIKEY_PERS_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Yubikey DEFAULT_MSG YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
+find_package_handle_standard_args(YubiKey DEFAULT_MSG YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
 
 # TODO: Is mark_as_advanced() necessary? It's used in many examples with
 #       little explanation.  Disable for now in favor of simplicity.

@@ -20,45 +20,45 @@
 #include "core/Global.h"
 #include "crypto/Random.h"
 
-#include "Yubikey.h"
+#include "YubiKey.h"
 
-Yubikey::Yubikey() : m_yk_void(NULL), m_ykds_void(NULL)
+YubiKey::YubiKey() : m_yk_void(NULL), m_ykds_void(NULL)
 {
 }
 
-Yubikey* Yubikey::m_instance(Q_NULLPTR);
+YubiKey* YubiKey::m_instance(Q_NULLPTR);
 
-Yubikey* Yubikey::instance()
+YubiKey* YubiKey::instance()
 {
     if (!m_instance) {
-        m_instance = new Yubikey();
+        m_instance = new YubiKey();
     }
 
     return m_instance;
 }
 
-bool Yubikey::init()
+bool YubiKey::init()
 {
     return false;
 }
 
-bool Yubikey::deinit()
+bool YubiKey::deinit()
 {
     return false;
 }
 
-void Yubikey::detect()
+void YubiKey::detect()
 {
 }
 
-bool Yubikey::getSerial(unsigned int& serial) const
+bool YubiKey::getSerial(unsigned int& serial) const
 {
     Q_UNUSED(serial);
 
     return false;
 }
 
-Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
+YubiKey::ChallengeResult YubiKey::challenge(int slot, bool mayBlock,
                                             const QByteArray& chal,
                                             QByteArray& resp) const
 {

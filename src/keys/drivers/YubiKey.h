@@ -23,14 +23,14 @@
 /**
  * Singleton class to manage the interface to the hardware
  */
-class Yubikey : public QObject
+class YubiKey : public QObject
 {
     Q_OBJECT
 
 public:
     enum ChallengeResult { ERROR = -1, SUCCESS = 0, WOULDBLOCK };
 
-    static Yubikey* instance();
+    static YubiKey* instance();
 
     /** Initialize the underlying yubico libraries */
     bool init();
@@ -57,14 +57,14 @@ Q_SIGNALS:
     void detected(int slot, bool blocking);
 
 private:
-    explicit Yubikey();
-    static Yubikey* m_instance;
+    explicit YubiKey();
+    static YubiKey* m_instance;
 
     /* Create void ptr here to avoid ifdef header include mess */
     void *m_yk_void;
     void *m_ykds_void;
 
-    Q_DISABLE_COPY(Yubikey)
+    Q_DISABLE_COPY(YubiKey)
 };
 
 #endif // KEEPASSX_YUBIKEY_H

@@ -132,9 +132,9 @@ if(NOT GCRYPT_HAS_SALSA20)
 endif()
 
 if(YUBIKEY_FOUND)
-  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/Yubikey.cpp)
+  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/YubiKey.cpp)
 else()
-  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/YubikeyStub.cpp)
+  set(keepassx_SOURCES ${keepassx_SOURCES} keys/drivers/YubiKeyStub.cpp)
 endif()
 
 set(keepassx_SOURCES_MAINEXE
@@ -193,7 +193,7 @@ set(keepassx_MOC
     gui/group/GroupModel.h
     gui/group/GroupView.h
     keys/CompositeKey_p.h
-    keys/drivers/Yubikey.h
+    keys/drivers/YubiKey.h
     streams/HashedBlockStream.h
     streams/LayeredStream.h
     streams/qtiocompressor.h

@@ -188,7 +188,7 @@ if(NOT ZLIB_SUPPORTS_GZIP)
 endif()
 
 # Optional
-find_package(Yubikey)
+find_package(YubiKey)
 
 if(YUBIKEY_FOUND)
   add_gcc_compiler_cxxflags("-DYUBIKEY_FOUND")

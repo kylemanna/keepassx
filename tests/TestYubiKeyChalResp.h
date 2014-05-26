@@ -22,7 +22,7 @@
 
 #include "keys/YkChallengeResponseKey.h"
 
-class TestYubikeyChalResp: public QObject
+class TestYubiKeyChalResp: public QObject
 {
     Q_OBJECT
 

@@ -81,11 +81,11 @@ void DatabaseOpenWidget::load(const QString& filename)
         m_ui->comboKeyFile->addItem(lastKeyFiles[m_filename].toString());
     }
 
-    /* Yubikey init is slow */
-    connect(Yubikey::instance(), SIGNAL(detected(int,bool)),
+    /* YubiKey init is slow */
+    connect(YubiKey::instance(), SIGNAL(detected(int,bool)),
                                  SLOT(ykDetected(int,bool)),
                                  Qt::QueuedConnection);
-    QtConcurrent::run(Yubikey::instance(), &Yubikey::detect);
+    QtConcurrent::run(YubiKey::instance(), &YubiKey::detect);
 
     m_ui->editPassword->setFocus();
 }

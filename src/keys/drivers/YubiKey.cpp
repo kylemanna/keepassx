@@ -27,7 +27,7 @@
 #include "core/Global.h"
 #include "crypto/Random.h"
 
-#include "Yubikey.h"
+#include "YubiKey.h"
 
 /* Cast the void pointer from the generalized class definition
  * to the proper pointer type from the now included system headers
@@ -35,30 +35,30 @@
 #define m_yk (static_cast<YK_KEY*>(m_yk_void))
 #define m_ykds (static_cast<YK_STATUS*>(m_ykds_void))
 
-Yubikey::Yubikey() : m_yk_void(NULL), m_ykds_void(NULL)
+YubiKey::YubiKey() : m_yk_void(NULL), m_ykds_void(NULL)
 {
 }
 
-Yubikey* Yubikey::m_instance(Q_NULLPTR);
+YubiKey* YubiKey::m_instance(Q_NULLPTR);
 
 /**
- * @brief Yubikey::instance - get instance of singleton
+ * @brief YubiKey::instance - get instance of singleton
  * @return
  */
-Yubikey* Yubikey::instance()
+YubiKey* YubiKey::instance()
 {
     if (!m_instance) {
-        m_instance = new Yubikey();
+        m_instance = new YubiKey();
     }
 
     return m_instance;
 }
 
 /**
- * @brief Yubikey::init - initialize yubikey library and hardware
+ * @brief YubiKey::init - initialize yubikey library and hardware
  * @return
  */
-bool Yubikey::init()
+bool YubiKey::init()
 {
     /* Previously initalized */
     if (m_yk != NULL && m_ykds != NULL) {
@@ -93,10 +93,10 @@ bool Yubikey::init()
 }
 
 /**
- * @brief Yubikey::deinit - cleanup after init
+ * @brief YubiKey::deinit - cleanup after init
  * @return true on success
  */
-bool Yubikey::deinit()
+bool YubiKey::deinit()
 {
     if (m_yk) {
         yk_close_key(m_yk);
@@ -112,32 +112,32 @@ bool Yubikey::deinit()
 }
 
 /**
- * @brief Yubikey::detect - probe for attached Yubikeys
+ * @brief YubiKey::detect - probe for attached YubiKeys
  */
-void Yubikey::detect()
+void YubiKey::detect()
 {
     if (init()) {
 
         for (int i = 1; i < 3; i++) {
-            Yubikey::ChallengeResult result;
+            YubiKey::ChallengeResult result;
             QByteArray rand = randomGen()->randomArray(1);
             QByteArray resp;
 
             result = challenge(i, false, rand, resp);
 
-            if (result != Yubikey::ERROR) {
-                Q_EMIT detected(i, result == Yubikey::WOULDBLOCK ? true : false);
+            if (result != YubiKey::ERROR) {
+                Q_EMIT detected(i, result == YubiKey::WOULDBLOCK ? true : false);
             }
         }
     }
 }
 
 /**
- * @brief Yubikey::getSerial - serial number of yubikey
+ * @brief YubiKey::getSerial - serial number of yubikey
  * @param serial
  * @return
  */
-bool Yubikey::getSerial(unsigned int& serial) const
+bool YubiKey::getSerial(unsigned int& serial) const
 {
     if (!yk_get_serial(m_yk, 1, 0, &serial)) {
         return false;
@@ -160,20 +160,20 @@ static inline QString printByteArray(const QByteArray& a)
 }
 
 /**
- * @brief Yubikey::challenge - issue a challenge
+ * @brief YubiKey::challenge - issue a challenge
  *
- * This operation could block if the Yubikey requires a touch to trigger.
+ * This operation could block if the YubiKey requires a touch to trigger.
  *
  * TODO: Signal to the UI that the system is waiting for challenge response
  *       touch.
  *
- * @param slot Yubikey configuration slot
+ * @param slot YubiKey configuration slot
  * @param mayBlock operation is allowed to block
- * @param chal challenge input to Yubikey
- * @param resp response output from Yubikey
+ * @param chal challenge input to YubiKey
+ * @param resp response output from YubiKey
  * @return SUCCESS when successful
  */
-Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
+YubiKey::ChallengeResult YubiKey::challenge(int slot, bool mayBlock,
                                             const QByteArray& chal,
                                             QByteArray& resp) const
 {
@@ -218,13 +218,13 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
             /* Something went wrong, close the key, so that the next call to
              * can try to re-open.
              *
-             * Likely caused by the Yubikey being unplugged.
+             * Likely caused by the YubiKey being unplugged.
              */
 
             if (yk_errno == YK_EUSBERR) {
                 qWarning() << "USB error:" << yk_usb_strerror();
             } else {
-                qWarning() << "Yubikey core error:" << yk_strerror(yk_errno);
+                qWarning() << "YubiKey core error:" << yk_strerror(yk_errno);
             }
 
             return ERROR;

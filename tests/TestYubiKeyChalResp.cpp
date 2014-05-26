@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TestYubikeyChalResp.h"
+#include "TestYubiKeyChalResp.h"
 
 #include <QTest>
 #include <QtConcurrentRun>
@@ -24,59 +24,59 @@
 #include "tests.h"
 #include "keys/YkChallengeResponseKey.h"
 
-QTEST_GUILESS_MAIN(TestYubikeyChalResp)
+QTEST_GUILESS_MAIN(TestYubiKeyChalResp)
 
-void TestYubikeyChalResp::initTestCase()
+void TestYubiKeyChalResp::initTestCase()
 {
     m_detected = 0;
     m_key = NULL;
 }
 
-void TestYubikeyChalResp::cleanupTestCase()
+void TestYubiKeyChalResp::cleanupTestCase()
 {
     if (m_key)
         delete m_key;
 }
 
-void TestYubikeyChalResp::init()
+void TestYubiKeyChalResp::init()
 {
-    bool result = Yubikey::instance()->init();
+    bool result = YubiKey::instance()->init();
 
     if (!result) {
-        QSKIP("Unable to connect to Yubikey", SkipAll);
+        QSKIP("Unable to connect to YubiKey", SkipAll);
     }
 }
 
-void TestYubikeyChalResp::detectDevices()
+void TestYubiKeyChalResp::detectDevices()
 {
-    connect(Yubikey::instance(), SIGNAL(detected(int,bool)),
+    connect(YubiKey::instance(), SIGNAL(detected(int,bool)),
                                  SLOT(ykDetected(int,bool)),
                                  Qt::QueuedConnection);
-    QtConcurrent::run(Yubikey::instance(), &Yubikey::detect);
+    QtConcurrent::run(YubiKey::instance(), &YubiKey::detect);
 
     /* Need to wait for the hardware (that's hopefully plugged in)... */
     QTest::qWait(2000);
-    QVERIFY2(m_detected > 0, "Is a Yubikey attached?");
+    QVERIFY2(m_detected > 0, "Is a YubiKey attached?");
 }
 
-void TestYubikeyChalResp::getSerial()
+void TestYubiKeyChalResp::getSerial()
 {
     unsigned int serial;
-    QVERIFY(Yubikey::instance()->getSerial(serial));
+    QVERIFY(YubiKey::instance()->getSerial(serial));
 }
 
-void TestYubikeyChalResp::keyGetName()
+void TestYubiKeyChalResp::keyGetName()
 {
     QVERIFY(m_key);
     QVERIFY(m_key->getName().length() > 0);
 }
 
-void TestYubikeyChalResp::keyIssueChallenge()
+void TestYubiKeyChalResp::keyIssueChallenge()
 {
     QVERIFY(m_key);
     if (m_key->isBlocking()) {
         /* Testing active mode in unit tests is unreasonable */
-        QSKIP("Yubikey not in passive mode", SkipSingle);
+        QSKIP("YubiKey not in passive mode", SkipSingle);
     }
 
     QByteArray ba("UnitTest");
@@ -91,7 +91,7 @@ void TestYubikeyChalResp::keyIssueChallenge()
      */
 }
 
-void TestYubikeyChalResp::ykDetected(int slot, bool blocking)
+void TestYubiKeyChalResp::ykDetected(int slot, bool blocking)
 {
     Q_UNUSED(blocking);
 
@@ -103,7 +103,7 @@ void TestYubikeyChalResp::ykDetected(int slot, bool blocking)
         m_key = new YkChallengeResponseKey(slot, blocking);
 }
 
-void TestYubikeyChalResp::deinit()
+void TestYubiKeyChalResp::deinit()
 {
-    QVERIFY(Yubikey::instance()->deinit());
+    QVERIFY(YubiKey::instance()->deinit());
 }
