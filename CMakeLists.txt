@@ -191,7 +191,6 @@ endif()
 find_package(YubiKey)
 
 if(YUBIKEY_FOUND)
-  add_gcc_compiler_cxxflags("-DYUBIKEY_FOUND")
   include_directories(SYSTEM ${YUBIKEY_INCLUDE_DIRS})
 endif()
 

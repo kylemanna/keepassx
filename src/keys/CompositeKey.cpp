@@ -90,13 +90,7 @@ QByteArray CompositeKey::transform(const QByteArray& seed, quint64 rounds) const
     Q_ASSERT(seed.size() == 32);
     Q_ASSERT(rounds > 0);
 
-    CryptoHash cryptoHash(CryptoHash::Sha256);
-
-    Q_FOREACH (const Key* key, m_keys) {
-        cryptoHash.addData(key->rawKey());
-    }
-
-    QByteArray key = cryptoHash.result();
+    QByteArray key = rawKey();
 
     QFuture<QByteArray> future = QtConcurrent::run(transformKeyRaw, key.left(16), seed, rounds);
     QByteArray result2 = transformKeyRaw(key.right(16), seed, rounds);
@@ -124,6 +118,13 @@ QByteArray CompositeKey::transformKeyRaw(const QByteArray& key, const QByteArray
 
 QByteArray CompositeKey::challenge(const QByteArray& seed) const
 {
+    /* If no challenge response was requested, return nothing to
+     * maintain backwards compatability with regular databases.
+     */
+    if (m_challengeResponseKeys.length() == 0) {
+        return QByteArray();
+    }
+
     CryptoHash cryptoHash(CryptoHash::Sha256);
 
     Q_FOREACH (ChallengeResponseKey* key, m_challengeResponseKeys) {
@@ -142,8 +143,6 @@ void CompositeKey::addKey(const Key& key)
 void CompositeKey::addChallengeResponseKey(const ChallengeResponseKey& key)
 {
     m_challengeResponseKeys.append(key.clone());
-
-    //printf("%s():%d m_challengeResponseKeys.size() = %d\n", __func__, __LINE__, m_challengeResponseKeys.size());
 }
 
 int CompositeKey::transformKeyBenchmark(int msec)

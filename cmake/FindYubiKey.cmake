@@ -1,4 +1,4 @@
-#  Copyright (C) 2011 Felix Geyer <debfx@fobos.de>
+#  Copyright (C) 2014 Kyle Manna <kyle@kylemanna.com>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -12,7 +12,6 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# FIXME: update copyright
 
 find_path(YUBIKEY_CORE_INCLUDE_DIR yubikey.h)
 find_path(YUBIKEY_PERS_INCLUDE_DIR ykcore.h PATH_SUFFIXES ykpers-1)
@@ -27,4 +26,4 @@ find_package_handle_standard_args(YubiKey DEFAULT_MSG YUBIKEY_LIBRARIES YUBIKEY_
 
 # TODO: Is mark_as_advanced() necessary? It's used in many examples with
 #       little explanation.  Disable for now in favor of simplicity.
-mark_as_advanced(YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
+#mark_as_advanced(YUBIKEY_LIBRARIES YUBIKEY_INCLUDE_DIRS)
