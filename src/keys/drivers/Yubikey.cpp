@@ -17,14 +17,15 @@
 
 #include <stdio.h>
 
-#include "core/Global.h"
-#include "crypto/Random.h"
+#include <QDebug>
 
 #include <ykcore.h>
 #include <yubikey.h>
 #include <ykdef.h>
 #include <ykstatus.h>
-#include <ykpers-version.h>
+
+#include "core/Global.h"
+#include "crypto/Random.h"
 
 #include "Yubikey.h"
 
@@ -161,8 +162,8 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     r = reinterpret_cast<unsigned char*>(resp.data());
 
 #ifdef QT_DEBUG
-    fprintf(stderr, "%s(%d) c = %s\n", __func__, slot,
-            printByteArray(paddedChal).toLocal8Bit().data());
+    qDebug().nospace() << __func__ << "(" << slot << ") c = "
+                       << printByteArray(paddedChal);
 #endif
 
     int ret = yk_challenge_response(m_yk, yk_cmd, mayBlock,
@@ -182,13 +183,11 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
              * Likely caused by the Yubikey being unplugged.
              */
 
-#ifdef QT_DEBUG
             if (yk_errno == YK_EUSBERR) {
-                fprintf(stderr, "USB error: %s\n", yk_usb_strerror());
+                qWarning() << "USB error:" << yk_usb_strerror();
             } else {
-                fprintf(stderr, "Yubikey core error: %s\n", yk_strerror(yk_errno));
+                qWarning() << "Yubikey core error:" << yk_strerror(yk_errno);
             }
-#endif
 
             return ERROR;
         }
@@ -198,8 +197,8 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     resp.resize(20);
 
 #ifdef QT_DEBUG
-    fprintf(stderr, "%s(%d) r = %s, ret = %d\n", __func__, slot,
-            printByteArray(resp).toLocal8Bit().data(), ret);
+    qDebug().nospace() << __func__ << "(" << slot << ") r = "
+                       << printByteArray(resp) << ", ret = " << ret;
 #endif
 
     return SUCCESS;
