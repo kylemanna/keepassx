@@ -41,6 +41,10 @@ Yubikey::Yubikey() : m_yk_void(NULL), m_ykds_void(NULL)
 
 Yubikey* Yubikey::m_instance(Q_NULLPTR);
 
+/**
+ * @brief Yubikey::instance - get instance of singleton
+ * @return
+ */
 Yubikey* Yubikey::instance()
 {
     if (!m_instance) {
@@ -50,6 +54,10 @@ Yubikey* Yubikey::instance()
     return m_instance;
 }
 
+/**
+ * @brief Yubikey::init - initialize yubikey library and hardware
+ * @return
+ */
 bool Yubikey::init()
 {
     /* Previously initalized */
@@ -84,6 +92,10 @@ bool Yubikey::init()
     return true;
 }
 
+/**
+ * @brief Yubikey::deinit - cleanup after init
+ * @return true on success
+ */
 bool Yubikey::deinit()
 {
     if (m_yk) {
@@ -99,6 +111,9 @@ bool Yubikey::deinit()
     return true;
 }
 
+/**
+ * @brief Yubikey::detect - probe for attached Yubikeys
+ */
 void Yubikey::detect()
 {
     if (init()) {
@@ -117,6 +132,11 @@ void Yubikey::detect()
     }
 }
 
+/**
+ * @brief Yubikey::getSerial - serial number of yubikey
+ * @param serial
+ * @return
+ */
 bool Yubikey::getSerial(unsigned int& serial) const
 {
     if (!yk_get_serial(m_yk, 1, 0, &serial)) {
@@ -126,6 +146,11 @@ bool Yubikey::getSerial(unsigned int& serial) const
     return true;
 }
 
+/**
+ * @brief printByteArray - debug raw data
+ * @param a array input
+ * @return string representation of array
+ */
 static inline QString printByteArray(const QByteArray& a)
 {
     QString s;
@@ -134,7 +159,20 @@ static inline QString printByteArray(const QByteArray& a)
     return s;
 }
 
-
+/**
+ * @brief Yubikey::challenge - issue a challenge
+ *
+ * This operation could block if the Yubikey requires a touch to trigger.
+ *
+ * TODO: Signal to the UI that the system is waiting for challenge response
+ *       touch.
+ *
+ * @param slot Yubikey configuration slot
+ * @param mayBlock operation is allowed to block
+ * @param chal challenge input to Yubikey
+ * @param resp response output from Yubikey
+ * @return SUCCESS when successful
+ */
 Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
                                             const QByteArray& chal,
                                             QByteArray& resp) const
