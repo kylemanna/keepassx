@@ -50,20 +50,18 @@ Yubikey* Yubikey::instance()
 
 bool Yubikey::init()
 {
-	/* Already initalized */
-	if (m_yk != NULL) {
-		return true;
-	}
+    /* Already initalized */
+    if (m_yk != NULL) {
+        return true;
+    }
 
     if (!yk_init()) {
-        fprintf(stderr, "%s() unable to init yk\n", __func__);
         return false;
     }
 
     /* TODO: handle multiple attached hardware devices, currently own one */
     m_yk_void = static_cast<void *>(yk_open_first_key());
     if (m_yk == NULL) {
-        fprintf(stderr, "%s() unable to open first yk\n", __func__);
         return false;
     }
 
@@ -96,19 +94,6 @@ bool Yubikey::getSerial(unsigned int& serial) const
     }
 
     return true;
-}
-
-static void report_yk_error(void)
-{
-    if (yk_errno) {
-        if (yk_errno == YK_EUSBERR) {
-            fprintf(stderr, "USB error: %s\n",
-                    yk_usb_strerror());
-        } else {
-            fprintf(stderr, "Yubikey core error: %s\n",
-                    yk_strerror(yk_errno));
-        }
-    }
 }
 
 static inline QString printByteArray(const QByteArray& a)
@@ -146,7 +131,7 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     c = reinterpret_cast<const unsigned char*>(paddedChal.constData());
     r = reinterpret_cast<unsigned char*>(resp.data());
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
     fprintf(stderr, "%s(%d) c = %s\n", __func__, slot,
             printByteArray(paddedChal).toLocal8Bit().data());
 #endif
@@ -158,8 +143,14 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     if(!ret) {
         if (yk_errno == YK_EWOULDBLOCK) {
             return WOULDBLOCK;
-        } else {
-            report_yk_error();
+        } else if (yk_errno == YK_ETIMEOUT) {
+            return ERROR;
+        } else if (yk_errno) {
+            if (yk_errno == YK_EUSBERR) {
+                fprintf(stderr, "USB error: %s\n", yk_usb_strerror());
+            } else {
+                fprintf(stderr, "Yubikey core error: %s\n", yk_strerror(yk_errno));
+            }
             return ERROR;
         }
     }
@@ -167,7 +158,7 @@ Yubikey::ChallengeResult Yubikey::challenge(int slot, bool mayBlock,
     /* Actual HMAC-SHA1 response is only 20 bytes */
     resp.resize(20);
 
-#ifdef DEBUG
+#ifdef QT_DEBUG
     fprintf(stderr, "%s(%d) r = %s, ret = %d\n", __func__, slot,
             printByteArray(resp).toLocal8Bit().data(), ret);
 #endif
