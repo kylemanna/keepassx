@@ -22,7 +22,7 @@
 
 #include "Yubikey.h"
 
-Yubikey::Yubikey()
+Yubikey::Yubikey() : m_yk_void(NULL), m_ykds_void(NULL)
 {
 }
 
@@ -39,7 +39,11 @@ Yubikey* Yubikey::instance()
 
 bool Yubikey::init()
 {
-    m_yk = NULL;
+    return false;
+}
+
+bool Yubikey::deinit()
+{
     return false;
 }
 
@@ -49,6 +53,8 @@ void Yubikey::detect()
 
 bool Yubikey::getSerial(unsigned int& serial) const
 {
+    Q_UNUSED(serial);
+
     return false;
 }
 
