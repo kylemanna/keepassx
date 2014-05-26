@@ -99,6 +99,10 @@ if(UNIX AND NOT APPLE)
   set(TEST_LIBRARIES ${TEST_LIBRARIES} ${QT_QTDBUS_LIBRARY})
 endif()
 
+if(YUBIKEY_FOUND)
+  set(TEST_LIBRARIES ${TEST_LIBRARIES} ${YUBIKEY_LIBRARIES})
+endif()
+
 set(modeltest_SOURCRS modeltest.cpp)
 qt4_wrap_cpp(modeltest_SOURCRS modeltest.h)
 add_library(modeltest STATIC ${modeltest_SOURCRS})
@@ -168,6 +172,9 @@ add_unit_test(NAME testentrysearcher SOURCES TestEntrySearcher.cpp MOCS TestEntr
               LIBS ${TEST_LIBRARIES})
 
 add_unit_test(NAME testexporter SOURCES TestExporter.cpp MOCS TestExporter.h
+              LIBS ${TEST_LIBRARIES})
+
+add_unit_test(NAME testyubikeychalresp SOURCES TestYubikeyChalResp.cpp MOCS TestYubikeyChalResp.h
               LIBS ${TEST_LIBRARIES})
 
 if(WITH_GUI_TESTS)
