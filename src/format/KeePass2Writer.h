@@ -28,8 +28,8 @@ class KeePass2Writer
 {
 public:
     KeePass2Writer();
-    void writeDatabase(QIODevice* device, Database* db);
-    void writeDatabase(const QString& filename, Database* db);
+    bool writeDatabase(QIODevice* device, Database* db);
+    bool writeDatabase(const QString& filename, Database* db);
     bool hasError();
     QString errorString();
 

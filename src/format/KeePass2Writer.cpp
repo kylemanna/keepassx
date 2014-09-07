@@ -31,7 +31,6 @@
 #include "streams/QtIOCompressor"
 #include "streams/SymmetricCipherStream.h"
 
-#define CHECK_RETURN(x) if (!(x)) return;
 #define CHECK_RETURN_FALSE(x) if (!(x)) return false;
 
 KeePass2Writer::KeePass2Writer()
@@ -40,7 +39,7 @@ KeePass2Writer::KeePass2Writer()
 {
 }
 
-void KeePass2Writer::writeDatabase(QIODevice* device, Database* db)
+bool KeePass2Writer::writeDatabase(QIODevice* device, Database* db)
 {
     m_error = false;
     m_errorStr.clear();
@@ -62,37 +61,40 @@ void KeePass2Writer::writeDatabase(QIODevice* device, Database* db)
     header.open(QIODevice::WriteOnly);
     m_device = &header;
 
-    CHECK_RETURN(writeData(Endian::int32ToBytes(KeePass2::SIGNATURE_1, KeePass2::BYTEORDER)));
-    CHECK_RETURN(writeData(Endian::int32ToBytes(KeePass2::SIGNATURE_2, KeePass2::BYTEORDER)));
-    CHECK_RETURN(writeData(Endian::int32ToBytes(KeePass2::FILE_VERSION, KeePass2::BYTEORDER)));
+    CHECK_RETURN_FALSE(writeData(Endian::int32ToBytes(KeePass2::SIGNATURE_1, KeePass2::BYTEORDER)));
+    CHECK_RETURN_FALSE(writeData(Endian::int32ToBytes(KeePass2::SIGNATURE_2, KeePass2::BYTEORDER)));
+    CHECK_RETURN_FALSE(writeData(Endian::int32ToBytes(KeePass2::FILE_VERSION, KeePass2::BYTEORDER)));
 
-    CHECK_RETURN(writeHeaderField(KeePass2::CipherID, db->cipher().toByteArray()));
-    CHECK_RETURN(writeHeaderField(KeePass2::CompressionFlags,
-                                  Endian::int32ToBytes(db->compressionAlgo(),
-                                                       KeePass2::BYTEORDER)));
-    CHECK_RETURN(writeHeaderField(KeePass2::MasterSeed, masterSeed));
-    CHECK_RETURN(writeHeaderField(KeePass2::TransformSeed, db->transformSeed()));
-    CHECK_RETURN(writeHeaderField(KeePass2::TransformRounds,
-                                  Endian::int64ToBytes(db->transformRounds(),
-                                                       KeePass2::BYTEORDER)));
-    CHECK_RETURN(writeHeaderField(KeePass2::EncryptionIV, encryptionIV));
-    CHECK_RETURN(writeHeaderField(KeePass2::ProtectedStreamKey, protectedStreamKey));
-    CHECK_RETURN(writeHeaderField(KeePass2::StreamStartBytes, startBytes));
-    CHECK_RETURN(writeHeaderField(KeePass2::InnerRandomStreamID,
-                                  Endian::int32ToBytes(KeePass2::Salsa20,
-                                                       KeePass2::BYTEORDER)));
-    CHECK_RETURN(writeHeaderField(KeePass2::EndOfHeader, endOfHeader));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::CipherID, db->cipher().toByteArray()));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::CompressionFlags,
+                                        Endian::int32ToBytes(db->compressionAlgo(),
+                                                             KeePass2::BYTEORDER)));
+
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::MasterSeed, masterSeed));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::TransformSeed, db->transformSeed()));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::TransformRounds,
+                                        Endian::int64ToBytes(db->transformRounds(),
+                                                             KeePass2::BYTEORDER)));
+
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::EncryptionIV, encryptionIV));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::ProtectedStreamKey, protectedStreamKey));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::StreamStartBytes, startBytes));
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::InnerRandomStreamID,
+                                        Endian::int32ToBytes(KeePass2::Salsa20,
+                                                             KeePass2::BYTEORDER)));
+
+    CHECK_RETURN_FALSE(writeHeaderField(KeePass2::EndOfHeader, endOfHeader));
 
     header.close();
     m_device = device;
     QByteArray headerHash = CryptoHash::hash(header.data(), CryptoHash::Sha256);
-    CHECK_RETURN(writeData(header.data()));
+    CHECK_RETURN_FALSE(writeData(header.data()));
 
     SymmetricCipherStream cipherStream(device, SymmetricCipher::Aes256, SymmetricCipher::Cbc,
                                        SymmetricCipher::Encrypt, finalKey, encryptionIV);
     cipherStream.open(QIODevice::WriteOnly);
     m_device = &cipherStream;
-    CHECK_RETURN(writeData(startBytes));
+    CHECK_RETURN_FALSE(writeData(startBytes));
 
     HashedBlockStream hashedStream(&cipherStream);
     hashedStream.open(QIODevice::WriteOnly);
@@ -113,6 +115,7 @@ void KeePass2Writer::writeDatabase(QIODevice* device, Database* db)
 
     KeePass2XmlWriter xmlWriter;
     xmlWriter.writeDatabase(m_device, db, &randomStream, headerHash);
+    return true;
 }
 
 bool KeePass2Writer::writeData(const QByteArray& data)
@@ -140,14 +143,14 @@ bool KeePass2Writer::writeHeaderField(KeePass2::HeaderFieldID fieldId, const QBy
     return true;
 }
 
-void KeePass2Writer::writeDatabase(const QString& filename, Database* db)
+bool KeePass2Writer::writeDatabase(const QString& filename, Database* db)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly|QIODevice::Truncate)) {
         raiseError(file.errorString());
-        return;
+        return false;
     }
-    writeDatabase(&file, db);
+    return writeDatabase(&file, db);
 }
 
 bool KeePass2Writer::hasError()
