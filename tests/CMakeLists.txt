@@ -177,6 +177,9 @@ add_unit_test(NAME testexporter SOURCES TestExporter.cpp MOCS TestExporter.h
 add_unit_test(NAME testykchallengeresponsekey SOURCES TestYkChallengeResponseKey.cpp MOCS TestYkChallengeResponseKey.h
               LIBS ${TEST_LIBRARIES})
 
+add_unit_test(NAME testhmacsha1challengeresponsekey SOURCES TestHmacSha1ChallengeResponseKey.cpp MOCS TestHmacSha1ChallengeResponseKey.h
+              LIBS ${TEST_LIBRARIES})
+
 if(WITH_GUI_TESTS)
   add_subdirectory(gui)
 endif(WITH_GUI_TESTS)
