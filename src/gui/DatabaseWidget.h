@@ -22,6 +22,7 @@
 #include <QStackedWidget>
 
 #include "core/Global.h"
+#include "core/Uuid.h"
 
 #include "gui/entry/EntryModel.h"
 
@@ -78,6 +79,12 @@ public:
     void setSplitterSizes(const QList<int>& sizes);
     QList<int> entryHeaderViewSizes() const;
     void setEntryViewHeaderSizes(const QList<int>& sizes);
+    void clearAllWidgets();
+    bool currentEntryHasTitle();
+    bool currentEntryHasUsername();
+    bool currentEntryHasPassword();
+    bool currentEntryHasUrl();
+    bool currentEntryHasNotes();
 
 Q_SIGNALS:
     void closeRequest();
@@ -143,6 +150,7 @@ private Q_SLOTS:
 private:
     void setClipboardTextAndMinimize(const QString& text);
     void setIconFromParent();
+    void replaceDatabase(Database* db);
 
     Database* m_db;
     const QScopedPointer<Ui::SearchWidget> m_searchUi;
@@ -164,8 +172,8 @@ private:
     Group* m_newParent;
     Group* m_lastGroup;
     QTimer* m_searchTimer;
-    QWidget* m_widgetBeforeLock;
     QString m_filename;
+    Uuid m_groupBeforeLock;
 };
 
 #endif // KEEPASSX_DATABASEWIDGET_H

@@ -21,6 +21,7 @@
 #include <QHash>
 #include <QTabWidget>
 
+#include "core/qlockfile.h"
 #include "format/KeePass2Writer.h"
 #include "gui/DatabaseWidget.h"
 
@@ -34,6 +35,7 @@ struct DatabaseManagerStruct
     DatabaseManagerStruct();
 
     DatabaseWidget* dbWidget;
+    QLockFile* lockFile;
     QString filePath;
     QString canonicalFilePath;
     QString fileName;
@@ -62,8 +64,8 @@ public Q_SLOTS:
     void newDatabase();
     void openDatabase();
     void importKeePass1Database();
-    void saveDatabase(int index = -1);
-    void saveDatabaseAs(int index = -1);
+    bool saveDatabase(int index = -1);
+    bool saveDatabaseAs(int index = -1);
     bool closeDatabase(int index = -1);
     void closeDatabaseFromSender();
     bool closeAllDatabases();
@@ -88,8 +90,8 @@ private Q_SLOTS:
     void emitActivateDatabaseChanged();
 
 private:
-    void saveDatabase(Database* db);
-    void saveDatabaseAs(Database* db);
+    bool saveDatabase(Database* db);
+    bool saveDatabaseAs(Database* db);
     bool closeDatabase(Database* db);
     void deleteDatabase(Database* db);
     int databaseIndex(Database* db);

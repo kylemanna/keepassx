@@ -343,6 +343,22 @@ void Metadata::addCustomIcon(const Uuid& uuid, const QImage& icon)
     Q_EMIT modified();
 }
 
+void Metadata::addCustomIconScaled(const Uuid& uuid, const QImage& icon)
+{
+    QImage iconScaled;
+
+    // scale down to 128x128 if icon is larger
+    if (icon.width() > 128 || icon.height() > 128) {
+        iconScaled = icon.scaled(QSize(128, 128), Qt::KeepAspectRatio,
+                                 Qt::SmoothTransformation);
+    }
+    else {
+        iconScaled = icon;
+    }
+
+    addCustomIcon(uuid, iconScaled);
+}
+
 void Metadata::removeCustomIcon(const Uuid& uuid)
 {
     Q_ASSERT(!uuid.isNull());

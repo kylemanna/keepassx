@@ -277,6 +277,7 @@ void EditEntryWidget::loadEntry(Entry* entry, bool create, bool history, const Q
     }
 
     setForms(entry);
+    setReadOnly(m_history);
 
     setCurrentRow(0);
     setRowHidden(m_historyWidget, m_history);
@@ -384,10 +385,7 @@ void EditEntryWidget::setForms(const Entry* entry, bool restore)
 void EditEntryWidget::saveEntry()
 {
     if (m_history) {
-        m_entry = Q_NULLPTR;
-        m_database = Q_NULLPTR;
-        m_entryAttributes->clear();
-        m_entryAttachments->clear();
+        clear();
         Q_EMIT editFinished(false);
         return;
     }
@@ -453,12 +451,7 @@ void EditEntryWidget::saveEntry()
     }
 
 
-    m_entry = Q_NULLPTR;
-    m_database = Q_NULLPTR;
-    m_entryAttributes->clear();
-    m_entryAttachments->clear();
-    m_autoTypeAssoc->clear();
-    m_historyModel->clear();
+    clear();
 
     Q_EMIT editFinished(true);
 }
@@ -466,10 +459,7 @@ void EditEntryWidget::saveEntry()
 void EditEntryWidget::cancel()
 {
     if (m_history) {
-        m_entry = Q_NULLPTR;
-        m_database = Q_NULLPTR;
-        m_entryAttributes->clear();
-        m_entryAttachments->clear();
+        clear();
         Q_EMIT editFinished(false);
         return;
     }
@@ -479,14 +469,19 @@ void EditEntryWidget::cancel()
         m_entry->setIcon(Entry::DefaultIconNumber);
     }
 
-    m_entry = 0;
-    m_database = 0;
+    clear();
+
+    Q_EMIT editFinished(false);
+}
+
+void EditEntryWidget::clear()
+{
+    m_entry = Q_NULLPTR;
+    m_database = Q_NULLPTR;
     m_entryAttributes->clear();
     m_entryAttachments->clear();
     m_autoTypeAssoc->clear();
     m_historyModel->clear();
-
-    Q_EMIT editFinished(false);
 }
 
 void EditEntryWidget::togglePasswordGeneratorButton(bool checked)
