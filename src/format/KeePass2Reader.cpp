@@ -113,8 +113,14 @@ Database* KeePass2Reader::readDatabase(QIODevice* device, const CompositeKey& ke
         return nullptr;
     }
 
+    if (m_db->challengeMasterSeed(m_masterSeed) == false) {
+        raiseError(tr("Unable to issue challenge-response."));
+        return Q_NULLPTR;
+    }
+
     CryptoHash hash(CryptoHash::Sha256);
     hash.addData(m_masterSeed);
+    hash.addData(m_db->challengeResponseKey());
     hash.addData(m_db->transformedMasterKey());
     QByteArray finalKey = hash.result();
 
@@ -191,7 +197,7 @@ Database* KeePass2Reader::readDatabase(QIODevice* device, const CompositeKey& ke
     if (!xmlReader.headerHash().isEmpty()) {
         QByteArray headerHash = CryptoHash::hash(headerStream.storedData(), CryptoHash::Sha256);
         if (headerHash != xmlReader.headerHash()) {
-            raiseError("Head doesn't match hash");
+            raiseError("Header doesn't match hash");
             return nullptr;
         }
     }
