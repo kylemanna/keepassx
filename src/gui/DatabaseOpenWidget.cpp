@@ -82,7 +82,7 @@ void DatabaseOpenWidget::load(const QString& filename)
             m_ui->comboKeyFile->addItem(lastKeyFiles[m_filename].toString());
         }
     }
-    
+
     /* YubiKey init is slow */
     connect(YubiKey::instance(), SIGNAL(detected(int,bool)),
                                  SLOT(ykDetected(int,bool)),
