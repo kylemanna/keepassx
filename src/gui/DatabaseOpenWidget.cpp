@@ -111,7 +111,6 @@ void DatabaseOpenWidget::openDatabase()
 
     QFile file(m_filename);
     if (!file.open(QIODevice::ReadOnly)) {
-	    if(!(QFile::permissions(fileName) & 0x0400)){ 
             MessageBox::warning(this, tr("Warning"), tr("You don't have reading rights for this file."));
 	    }
         return;
