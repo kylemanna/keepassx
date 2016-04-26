@@ -135,8 +135,9 @@ void DatabaseTabWidget::openDatabase(const QString& fileName, const QString& pw,
     // TODO: error handling
     if (!file.open(QIODevice::ReadWrite)) {
         if (!file.open(QIODevice::ReadOnly)) {
-            // can't open
-            // TODO: error message
+            if(!(QFile::permissions(fileName) & 0x0400)){ 
+		    MessageBox::warning(this, tr("Warning"), tr("You don't have reading rights for this file."));
+	    }
             return;
         }
         else {
