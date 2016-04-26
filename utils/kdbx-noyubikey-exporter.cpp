@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 
     QTextStream inHmacKey(stdin, QIODevice::ReadOnly);
     fputs(qPrintable("Enter the HMAC key used to configure the Yubikey (40 char hex): "), stdout);
-    QByteArray hexhmackey = inHmacKey.readLine().toAscii();
+    QByteArray hexhmackey = inHmacKey.readLine().toUtf8();
 
     if (hexhmackey.size() != 40) {
         qWarning("Wrong HMAC key size, must be a 40 char hex value.");
