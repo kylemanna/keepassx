@@ -22,6 +22,7 @@
 #include <QtConcurrent>
 #include <QElapsedTimer>
 
+#include "core/Global.h"
 #include "crypto/CryptoHash.h"
 #include "crypto/SymmetricCipher.h"
 
@@ -66,7 +67,7 @@ CompositeKey& CompositeKey::operator=(const CompositeKey& key)
 
     clear();
 
-    Q_FOREACH (const Key* subKey, key.m_keys) {
+    for (const Key* subKey : asConst(key.m_keys)) {
         addKey(*subKey);
     }
     Q_FOREACH (const ChallengeResponseKey* subKey, key.m_challengeResponseKeys) {
@@ -80,7 +81,7 @@ QByteArray CompositeKey::rawKey() const
 {
     CryptoHash cryptoHash(CryptoHash::Sha256);
 
-    Q_FOREACH (const Key* key, m_keys) {
+    for (const Key* key : m_keys) {
         cryptoHash.addData(key->rawKey());
     }
 

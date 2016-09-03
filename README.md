@@ -57,7 +57,7 @@ The following libraries are required:
 * Qt 5 (>= 5.2): qtbase and qttools5
 * libgcrypt (>= 1.6)
 * zlib
-* libxtst, libxi, qtx11extras (optional for auto-type on X11)
+* libxi, libxtst, qtx11extras (optional for auto-type on X11)
 
 On Debian you can install them with:
 
