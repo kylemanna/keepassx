@@ -134,7 +134,6 @@ void DatabaseTabWidget::openDatabase(const QString& fileName, const QString& pw,
     QFile file(fileName);
     if (!file.open(QIODevice::ReadWrite)) {
         if (!file.open(QIODevice::ReadOnly)) {
-            if(!(QFile::permissions(fileName) & 0x0400)){ 
             MessageBox::warning(this, tr("Error"), tr("Unable to open the database.").append("\n")
                                 .append(file.errorString()));
             return;
