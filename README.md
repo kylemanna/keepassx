@@ -1,5 +1,13 @@
 # KeePassX
 
+## Update 2017.03
+
+[KeePassX community (aka KeePassXC)](https://github.com/keepassxreboot/keepassxc) project has merged my original work and given it a permanent home.  This repo will no longer be updated and exists only for historical reasons.
+
+Yubikey support merged here in [pull request keepassxc #127](https://github.com/keepassxreboot/keepassxc/pull/127).
+
+Thanks everyone for testing and thanks to the keepassxreboot maintainers for carrying the torch!
+
 ## About
 
 KeePassX is an application for people with extremely high demands on secure personal data management.
