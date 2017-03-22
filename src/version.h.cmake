@@ -1,5 +1,5 @@
 #define GIT_HEAD "@GIT_HEAD@"
 #define GIT_DESCRIBE "@GIT_DESCRIBE@"
 
-#define DIST_HASH "$Format:%H$"
-#define DIST_DATE "$Format:%at$"
+#define DIST_HASH "4eea7c829754b263be142e09993147763c8a8585"
+#define DIST_DATE "1455360894"

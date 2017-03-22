@@ -17,10 +17,12 @@
 
 #include "CompositeKey.h"
 #include "CompositeKey_p.h"
+#include "ChallengeResponseKey.h"
 
 #include <QtConcurrent>
 #include <QElapsedTimer>
 
+#include "core/Global.h"
 #include "crypto/CryptoHash.h"
 #include "crypto/SymmetricCipher.h"
 
@@ -41,12 +43,14 @@ CompositeKey::~CompositeKey()
 void CompositeKey::clear()
 {
     qDeleteAll(m_keys);
+    qDeleteAll(m_challengeResponseKeys);
     m_keys.clear();
+    m_challengeResponseKeys.clear();
 }
 
 bool CompositeKey::isEmpty() const
 {
-    return m_keys.isEmpty();
+    return m_keys.isEmpty() && m_challengeResponseKeys.isEmpty();
 }
 
 CompositeKey* CompositeKey::clone() const
@@ -63,8 +67,11 @@ CompositeKey& CompositeKey::operator=(const CompositeKey& key)
 
     clear();
 
-    Q_FOREACH (const Key* subKey, key.m_keys) {
+    for (const Key* subKey : asConst(key.m_keys)) {
         addKey(*subKey);
+    }
+    Q_FOREACH (const ChallengeResponseKey* subKey, key.m_challengeResponseKeys) {
+        addChallengeResponseKey(*subKey);
     }
 
     return *this;
@@ -74,7 +81,7 @@ QByteArray CompositeKey::rawKey() const
 {
     CryptoHash cryptoHash(CryptoHash::Sha256);
 
-    Q_FOREACH (const Key* key, m_keys) {
+    for (const Key* key : m_keys) {
         cryptoHash.addData(key->rawKey());
     }
 
@@ -141,9 +148,38 @@ QByteArray CompositeKey::transformKeyRaw(const QByteArray& key, const QByteArray
     return result;
 }
 
+bool CompositeKey::challenge(const QByteArray& seed, QByteArray& result) const
+{
+    /* If no challenge response was requested, return nothing to
+     * maintain backwards compatability with regular databases.
+     */
+    if (m_challengeResponseKeys.length() == 0) {
+        result.clear();
+        return true;
+    }
+
+    CryptoHash cryptoHash(CryptoHash::Sha256);
+
+    Q_FOREACH (ChallengeResponseKey* key, m_challengeResponseKeys) {
+        /* If the device isn't present or fails, return an error */
+        if (key->challenge(seed) == false) {
+            return false;
+        }
+        cryptoHash.addData(key->rawKey());
+    }
+
+    result = cryptoHash.result();
+    return true;
+}
+
 void CompositeKey::addKey(const Key& key)
 {
     m_keys.append(key.clone());
+}
+
+void CompositeKey::addChallengeResponseKey(const ChallengeResponseKey& key)
+{
+    m_challengeResponseKeys.append(key.clone());
 }
 
 int CompositeKey::transformKeyBenchmark(int msec)

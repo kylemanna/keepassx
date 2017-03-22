@@ -23,3 +23,11 @@ target_link_libraries(kdbx-extract
                       Qt5::Widgets
                       ${GCRYPT_LIBRARIES}
                       ${ZLIB_LIBRARIES})
+                      
+add_executable(kdbx-noyubikey-exporter kdbx-noyubikey-exporter.cpp)
+target_link_libraries(kdbx-noyubikey-exporter
+                      keepassx_core
+                      ${QT_QTCORE_LIBRARY}
+                      ${QT_QTGUI_LIBRARY}
+                      ${GCRYPT_LIBRARIES}
+                      ${ZLIB_LIBRARIES})

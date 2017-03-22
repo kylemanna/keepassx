@@ -91,13 +91,15 @@ Entry* Database::resolveEntry(const Uuid& uuid)
 
 Entry* Database::recFindEntry(const Uuid& uuid, Group* group)
 {
-    Q_FOREACH (Entry* entry, group->entries()) {
+    const QList<Entry*> entryList = group->entries();
+    for (Entry* entry : entryList) {
         if (entry->uuid() == uuid) {
             return entry;
         }
     }
 
-    Q_FOREACH (Group* child, group->children()) {
+    const QList<Group*> children = group->children();
+    for (Group* child : children) {
         Entry* result = recFindEntry(uuid, child);
         if (result) {
             return result;
@@ -118,7 +120,8 @@ Group* Database::recFindGroup(const Uuid& uuid, Group* group)
         return group;
     }
 
-    Q_FOREACH (Group* child, group->children()) {
+    const QList<Group*> children = group->children();
+    for (Group* child : children) {
         Group* result = recFindGroup(uuid, child);
         if (result) {
             return result;
@@ -171,6 +174,17 @@ quint64 Database::transformRounds() const
 QByteArray Database::transformedMasterKey() const
 {
     return m_data.transformedMasterKey;
+}
+
+QByteArray Database::challengeResponseKey() const
+{
+    return m_data.challengeResponseKey;
+}
+
+bool Database::challengeMasterSeed(const QByteArray& masterSeed)
+{
+    m_data.masterSeed = masterSeed;
+    return m_data.key.challenge(masterSeed, m_data.challengeResponseKey);
 }
 
 void Database::setCipher(const Uuid& cipher)
@@ -242,6 +256,22 @@ bool Database::hasKey() const
 bool Database::verifyKey(const CompositeKey& key) const
 {
     Q_ASSERT(hasKey());
+
+    /* If the database has challenge response keys, then the the verification
+     * key better as well */
+    if (!m_data.challengeResponseKey.isEmpty()) {
+        QByteArray result;
+
+        if (!key.challenge(m_data.masterSeed, result)) {
+            /* Challenge failed, (YubiKey?) removed? */
+            return false;
+        }
+
+        if (m_data.challengeResponseKey != result) {
+            /* Wrong response from challenged device(s) */
+            return false;
+        }
+    }
 
     return (m_data.key.rawKey() == key.rawKey());
 }
